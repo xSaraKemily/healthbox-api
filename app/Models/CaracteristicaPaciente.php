@@ -9,6 +9,8 @@ class CaracteristicaPaciente extends Model
 {
     use HasFactory;
 
+    protected $table = 'caracteristicas_paciente';
+
     protected $fillable = [
         'cpf',
         'peso',

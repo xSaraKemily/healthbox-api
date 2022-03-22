@@ -9,6 +9,8 @@ class CaracteristicaMedico extends Model
 {
     use HasFactory;
 
+    protected $table = 'caracteristicas_medico';
+
     protected $fillable = [
         'crm',
         'estado_sigla',

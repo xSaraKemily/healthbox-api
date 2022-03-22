@@ -9,6 +9,8 @@ class Solicitacaovinculo extends Model
 {
     use HasFactory;
 
+    protected $table = 'solicitacoes_vinculos';
+
     protected $fillable = [
         'medico_id',
         'paciente_id',
