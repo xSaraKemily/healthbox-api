@@ -24,6 +24,8 @@ return new class extends Migration
             $table->index('paciente_id');
             $table->index('vinculado');
 
+            $table->unique(['medico_id', 'paciente_id']);
+
             $table->foreign('medico_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('paciente_id')->references('id')->on('users')->onDelete('cascade');
         });
