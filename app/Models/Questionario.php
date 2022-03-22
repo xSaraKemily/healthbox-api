@@ -5,16 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Especializacao extends Model
+class Questionario extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'nome',
-    ];
+    protected $table = 'questionarios';
 
-    public function medico()
-    {
-        $this->belongsToMany('id', 'users', 'id');
-    }
+    protected $fillable = [
+        'titulo',
+        'descricao',
+    ];
 }
