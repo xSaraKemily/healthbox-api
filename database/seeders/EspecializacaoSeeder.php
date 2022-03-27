@@ -70,6 +70,7 @@ class EspecializacaoSeeder extends Seeder
             ['nome' => 'Radioterapia'],
             ['nome' => 'Reumatologia'],
             ['nome' => 'Urologia'],
+            ['nome' => 'Clinico Geral'],
         ]);
     }
 }

@@ -24,11 +24,9 @@ class CaracteristicaMedicoRequest extends FormRequest
     public function rules()
     {
         return [
-            'crm'              => 'required|unique:caracteristicas_medicos,crm',
             'estado_sigla'     => 'required',
             'descricao'        => 'nullable|max:500', //todo: analisar tamanho de caracteres
             'medico_id'        => 'required|exists:users|unique:caracteristicas_medicos,medico_id',
-            'especialiacao_id' => 'nullable|exists:especializacoes',
         ];
     }
 }

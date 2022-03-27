@@ -5,20 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CaracteristicaMedico extends Model
+class MedicoCrm extends Model
 {
     use HasFactory;
 
-    protected $table = 'caracteristicas_medico';
+    protected $table = 'medicos_crm';
 
     protected $fillable = [
-        'estado_sigla',
-        'descricao',
         'medico_id',
+        'crm',
     ];
 
     public function medico()
     {
-        $this->hasOne(User::class, 'id', 'medico_id');
+        return $this->hasOne(User::class, 'id', 'medico_id');
     }
 }

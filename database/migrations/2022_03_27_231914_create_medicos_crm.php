@@ -13,10 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('opinioes', function (Blueprint $table) {
-           $table->unsignedBigInteger('tratamento_id')->nullable()->after('paciente_id');
+        Schema::create('medicos_crm', function (Blueprint $table) {
+            $table->id();
+            $table->string('crm');
+            $table->unsignedBigInteger('medico_id');
+            $table->timestamps();
 
-            $table->foreign('tratamento_id')->references('id')->on('tratamentos');
+            $table->index('medico_id');
+
+            $table->foreign('medico_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -27,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('medicos_crm');
     }
 };
