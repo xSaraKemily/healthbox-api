@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\AuthController;
-use App\Http\Controllers\Api\UserController;
+use \App\Http\Controllers\Api\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,10 +15,6 @@ use App\Http\Controllers\Api\UserController;
 |
 */
 
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
-
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
@@ -27,8 +23,10 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register']);
 });
 
-
-
 Route::group(['middleware' => 'api'], function () {
     Route::get('especializacoes', [\App\Http\Controllers\Api\EspecializacaoController::class, 'index']);
+});
+
+Route::group(['middleware' => 'auth:api',], function () {
+    Route::get('usuarios/validate', [UserController::class, 'validateData']);
 });

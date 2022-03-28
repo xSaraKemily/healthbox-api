@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Validator;
 class UserController extends Controller
 {
     /**
-     * Store a new blog post.
+     * Store a new user.
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -237,5 +237,45 @@ class UserController extends Controller
         }
 
         return Response::json('Usuário atualizaco com sucesso');
+    }
+
+    public function validateData(Request $request) : JsonResponse
+    {
+        $validacao = [];
+
+        if($request->filled('email')){
+            $user = User::where('email', $request->email)->first();
+
+            $bool = true;
+            if($user) {
+                $bool = false;
+            }
+
+            $validacao['email']['validate'] = $bool;
+        }
+
+        if($request->filled('crm')){
+            $medicoCrm = MedicoCrm::where('crm', $request->crm)->first();
+
+            $bool = true;
+            if($medicoCrm) {
+                $bool = false;
+            }
+
+            $validacao['crm']['validate'] = $bool;
+        }
+
+        if($request->filled('cpf')){
+            $pacienteCpf = CaracteristicaPaciente::where('cpf', $request->cpf)->first();
+
+            $bool = true;
+            if($pacienteCpf) {
+                $bool = false;
+            }
+
+            $validacao['cpf']['validate'] = $bool;
+        }
+
+        return Response::json($validacao, 200);
     }
 }
