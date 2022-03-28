@@ -27,6 +27,8 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register']);
 });
 
-Route::group(['middleware' => 'api', 'prefix' => 'user'], function () {
-//    Route::post('/aa', [UserController::class, 'store']);
+
+
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('especializacoes', [\App\Http\Controllers\Api\EspecializacaoController::class, 'index']);
 });
