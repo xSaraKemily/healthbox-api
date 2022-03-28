@@ -28,10 +28,10 @@ class CaracteristicaPaciente extends Model
     {
         return [
             'cpf'         => 'required|max:11',
-            'peso'        => 'required|decimal',
-            'altura'      => 'required|decimal',
+            'peso'        => 'required|numeric',
+            'altura'      => 'required|numeric',
             'sexo'        => 'required|in:feminino,masculino,outros',
-            'paciente_id' => 'required|exists:users|unique:caracteristicas_paciente,paciente_id',
+            'paciente_id' => 'required|exists:users,id|unique:caracteristicas_paciente,paciente_id',
         ];
     }
 

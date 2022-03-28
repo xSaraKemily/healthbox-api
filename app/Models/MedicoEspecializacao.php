@@ -22,7 +22,7 @@ class MedicoEspecializacao extends Model
         return [
             'medico_id' => [
                 'required',
-                'exists:users',
+                'exists:users,id',
                 Rule::unique('medicos_especializacoes')->where(function ($query) {
                     return $query->where('medico_id', $this->medico_id)
                         ->where('especializacao_id', $this->especializacao_id);
@@ -30,7 +30,7 @@ class MedicoEspecializacao extends Model
             ],
             'especializacao_id' => [
                 'required',
-                'exists:especializacoes',
+                'exists:especializacoes,id',
                 Rule::unique('medicos_especializacoes')->where(function ($query) {
                     return $query->where('medico_id', $this->medico_id)
                         ->where('especializacao_id', $this->especializacao_id);

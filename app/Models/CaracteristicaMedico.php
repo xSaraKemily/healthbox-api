@@ -20,7 +20,7 @@ class CaracteristicaMedico extends Model
     {
         return [
             'descricao' => 'nullable|max:1000',
-            'medico_id' => 'required|exists:users|unique:caracteristicas_medico',
+            'medico_id' => 'required|exists:users,id|unique:caracteristicas_medico',
         ];
     }
 
