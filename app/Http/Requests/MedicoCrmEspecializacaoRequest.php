@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Models\MedicoEspecializacao;
+use App\Models\MedicoCrmEspecializacao;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class MedicoEspecializacaoRequest extends FormRequest
+class MedicoCrmEspecializacaoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,6 +25,6 @@ class MedicoEspecializacaoRequest extends FormRequest
      */
     public function rules()
     {
-        return (new MedicoEspecializacao())->rules();
+        return (new MedicoCrmEspecializacao())->rules();
     }
 }

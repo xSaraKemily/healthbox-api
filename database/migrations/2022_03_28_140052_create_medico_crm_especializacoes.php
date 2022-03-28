@@ -13,17 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('medicos_especializacoes', function (Blueprint $table) {
+        Schema::create('medico_crm_especializacoes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('medico_id');
+            $table->unsignedBigInteger('medico_crm_id');
             $table->unsignedBigInteger('especializacao_id');
             $table->timestamps();
 
-            $table->index('medico_id');
+            $table->index('medico_crm_id');
+            $table->index('especializacao_id');
 
-            $table->unique(['medico_id', 'especializacao_id']);
-
-            $table->foreign('medico_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('medico_crm_id')->references('id')->on('medicos_crm')->onDelete('cascade');
             $table->foreign('especializacao_id')->references('id')->on('especializacoes')->onDelete('cascade');
         });
     }
@@ -35,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('medico_especializacoes');
+        Schema::dropIfExists('medico_crm_especializacoes');
     }
 };

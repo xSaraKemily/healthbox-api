@@ -8,7 +8,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Models\CaracteristicaMedico;
 use App\Models\CaracteristicaPaciente;
 use App\Models\MedicoCrm;
-use App\Models\MedicoEspecializacao;
+use App\Models\MedicoCrmEspecializacao;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -78,7 +78,7 @@ class UserController extends Controller
 
                 if($request->filled('especializacoes')) {
                     foreach ($request->especializacoes as $especializacao) {
-                        $especializacao = new MedicoEspecializacao($especializacao);
+                        $especializacao = new MedicoCrmEspecializacao($especializacao);
                         $especializacao->medico_id = $user->id;
 
                         $validator = Validator::make($especializacao->getAttributes(), $especializacao->rules());
@@ -189,10 +189,10 @@ class UserController extends Controller
                 if($request->filled('especializacoes')) {
                     foreach ($request->especializacoes as $especializacao) {
                         if(!isset($especializacao['id'])) {
-                            $newEspecializacao = new MedicoEspecializacao($especializacao);
+                            $newEspecializacao = new MedicoCrmEspecializacao($especializacao);
                             $newEspecializacao->medico_id = $user->id;
                         } else {
-                            $newEspecializacao = MedicoEspecializacao::find($especializacao['id']);
+                            $newEspecializacao = MedicoCrmEspecializacao::find($especializacao['id']);
                             $newEspecializacao->fill($especializacao);
                         }
 

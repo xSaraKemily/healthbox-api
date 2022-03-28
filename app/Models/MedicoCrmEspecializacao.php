@@ -6,25 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Validation\Rule;
 
-class MedicoEspecializacao extends Model
+class MedicoCrmEspecializacao extends Model
 {
     use HasFactory;
 
     protected $table = 'medicos_especializacoes';
 
     protected $fillable = [
-        'medico_id',
+        'medico_crm_id',
         'especializacao_id',
     ];
 
     public function rules()
     {
         return [
-            'medico_id' => [
+            'medico_crm_id' => [
                 'required',
-                'exists:users,id',
-                Rule::unique('medicos_especializacoes')->where(function ($query) {
-                    return $query->where('medico_id', $this->medico_id)
+                'exists:medicos_crm,id',
+                Rule::unique('medicos_crm')->where(function ($query) {
+                    return $query->where('medico_crm_id', $this->medico_crm_id)
                         ->where('especializacao_id', $this->especializacao_id);
                 }),
             ],
@@ -39,9 +39,9 @@ class MedicoEspecializacao extends Model
         ];
     }
 
-    public function medico()
+    public function crm()
     {
-        return $this->hasOne(User::class, 'id', 'medico_id');
+        return $this->hasOne(MedicoCrm::class, 'id', 'medico_crm_id');
     }
 
     public function especializacao()
