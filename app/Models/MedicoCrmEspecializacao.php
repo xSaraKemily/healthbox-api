@@ -10,7 +10,7 @@ class MedicoCrmEspecializacao extends Model
 {
     use HasFactory;
 
-    protected $table = 'medicos_especializacoes';
+    protected $table = 'medico_crm_especializacoes';
 
     protected $fillable = [
         'medico_crm_id',
@@ -23,7 +23,7 @@ class MedicoCrmEspecializacao extends Model
             'medico_crm_id' => [
                 'required',
                 'exists:medicos_crm,id',
-                Rule::unique('medicos_crm')->where(function ($query) {
+                Rule::unique('medico_crm_especializacoes')->where(function ($query) {
                     return $query->where('medico_crm_id', $this->medico_crm_id)
                         ->where('especializacao_id', $this->especializacao_id);
                 }),
@@ -31,8 +31,8 @@ class MedicoCrmEspecializacao extends Model
             'especializacao_id' => [
                 'required',
                 'exists:especializacoes,id',
-                Rule::unique('medicos_especializacoes')->where(function ($query) {
-                    return $query->where('medico_id', $this->medico_id)
+                Rule::unique('medico_crm_especializacoes')->where(function ($query) {
+                    return $query->where('medico_crm_id', $this->medico_crm_id)
                         ->where('especializacao_id', $this->especializacao_id);
                 }),
             ]

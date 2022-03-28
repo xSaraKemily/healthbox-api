@@ -74,13 +74,13 @@ class UserController extends Controller
 
                         $newCrm->save();
 
-                        if(isset($crm->especializacoes)) {
-                            if(count($crm->especializacoes) > 2) {
+                        if(isset($crm['especializacoes'])) {
+                            if(count($crm['especializacoes']) > 2) {
                                 DB::rollBack();
                                 return Response::json(['message' => 'Um CRM não pode ter mais de 2 especializações'], 422);
                             }
 
-                            foreach ($crm->especializacoes as $especializacao) {
+                            foreach ($crm['especializacoes'] as $especializacao) {
                                 $especializacao = new MedicoCrmEspecializacao($especializacao);
                                 $especializacao->medico_crm_id = $newCrm->id;
 
@@ -189,8 +189,8 @@ class UserController extends Controller
 
                         $newCrm->save();
 
-                        if($crm->especializacoes) {
-                            foreach ($crm->especializacoes as $especializacao) {
+                        if(isset($crm['especializacoes'])) {
+                            foreach ($crm['especializacoes'] as $especializacao) {
                                 if(!isset($especializacao['id'])) {
                                     if(MedicoCrmEspecializacao::where('medico_crm_id', $newCrm->id)->count() >= 2) {
                                         DB::rollBack();
@@ -198,7 +198,7 @@ class UserController extends Controller
                                     }
 
                                     $newEspecializacao = new MedicoCrmEspecializacao($especializacao);
-                                    $newEspecializacao->medico__crm_id = $newCrm->id;
+                                    $newEspecializacao->medico_crm_id = $newCrm->id;
                                 } else {
                                     $newEspecializacao = MedicoCrmEspecializacao::find($especializacao['id']);
                                     $newEspecializacao->fill($especializacao);
