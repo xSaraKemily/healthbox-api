@@ -23,6 +23,7 @@ class User extends Authenticatable  implements JWTSubject
         'tipo',
         'password',
         'data_nascimento',
+        'sexo',
         'telefone',
         'foto_path',
         'ativo',
@@ -82,6 +83,7 @@ class User extends Authenticatable  implements JWTSubject
             'data_nascimento' => 'nullable|date',
             'telefone'        => 'nullable|max:9|min:8',
             'foto_path'       => 'nullable',
+            'sexo'            => 'required|in:F,M,O',
             'ativo'           => 'required|in:0,1',
         ];
     }

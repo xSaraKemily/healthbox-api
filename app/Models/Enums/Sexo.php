@@ -7,9 +7,9 @@ class Sexo
     public function sexos($sexo = null)
     {
         $sexos = [
-            'feminino'  => 'Feminino',
-            'masculino' => 'Masculino',
-            'outros'    => 'Outros'
+            'F'  => 'Feminino',
+            'M' => 'Masculino',
+            'O' => 'Outros'
         ];
 
         if($sexo) {

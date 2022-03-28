@@ -15,7 +15,6 @@ class CaracteristicaPaciente extends Model
         'cpf',
         'peso',
         'altura',
-        'sexo',
         'paciete_id',
     ];
 
@@ -30,7 +29,6 @@ class CaracteristicaPaciente extends Model
             'cpf'         => 'required|max:11',
             'peso'        => 'required|numeric',
             'altura'      => 'required|numeric',
-            'sexo'        => 'required|in:feminino,masculino,outros',
             'paciente_id' => 'required|exists:users,id|unique:caracteristicas_paciente,paciente_id',
         ];
     }
