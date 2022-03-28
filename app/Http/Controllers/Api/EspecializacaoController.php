@@ -16,6 +16,6 @@ class EspecializacaoController extends Controller
            $espec = $espec->where('nome', 'LIKE', "%$request->nome%");
        }
 
-       return $espec->paginate(10);
+       return $espec->paginate(100);
    }
 }
