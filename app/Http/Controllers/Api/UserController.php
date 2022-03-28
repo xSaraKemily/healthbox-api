@@ -62,33 +62,38 @@ class UserController extends Controller
 
                 if($request->filled('crms')) {
                     foreach ($request->crms as $crm) {
-                        $crm = new MedicoCrm($crm);
-                        $crm->medico_id = $user->id;
+                        $newCrm = new MedicoCrm($crm);
+                        $newCrm->medico_id = $user->id;
 
-                        $validator = Validator::make($crm->getAttributes(), $crm->rules());
-
-                        if($validator->fails()) {
-                            DB::rollBack();
-                            return Response::json(['message' => $validator->errors()->all()], 422);
-                        }
-
-                        $crm->save();
-                    }
-                }
-
-                if($request->filled('especializacoes')) {
-                    foreach ($request->especializacoes as $especializacao) {
-                        $especializacao = new MedicoCrmEspecializacao($especializacao);
-                        $especializacao->medico_id = $user->id;
-
-                        $validator = Validator::make($especializacao->getAttributes(), $especializacao->rules());
+                        $validator = Validator::make($newCrm->getAttributes(), $newCrm->rules());
 
                         if($validator->fails()) {
                             DB::rollBack();
                             return Response::json(['message' => $validator->errors()->all()], 422);
                         }
 
-                        $especializacao->save();
+                        $newCrm->save();
+
+                        if(isset($crm->especializacoes)) {
+                            if(count($crm->especializacoes) > 2) {
+                                DB::rollBack();
+                                return Response::json(['message' => 'Um CRM não pode ter mais de 2 especializações'], 422);
+                            }
+
+                            foreach ($crm->especializacoes as $especializacao) {
+                                $especializacao = new MedicoCrmEspecializacao($especializacao);
+                                $especializacao->medico_crm_id = $newCrm->id;
+
+                                $validator = Validator::make($especializacao->getAttributes(), $especializacao->rules());
+
+                                if($validator->fails()) {
+                                    DB::rollBack();
+                                    return Response::json(['message' => $validator->errors()->all()], 422);
+                                }
+
+                                $especializacao->save();
+                            }
+                        }
                     }
                 }
             } else {
@@ -183,27 +188,32 @@ class UserController extends Controller
                         }
 
                         $newCrm->save();
-                    }
-                }
 
-                if($request->filled('especializacoes')) {
-                    foreach ($request->especializacoes as $especializacao) {
-                        if(!isset($especializacao['id'])) {
-                            $newEspecializacao = new MedicoCrmEspecializacao($especializacao);
-                            $newEspecializacao->medico_id = $user->id;
-                        } else {
-                            $newEspecializacao = MedicoCrmEspecializacao::find($especializacao['id']);
-                            $newEspecializacao->fill($especializacao);
+                        if($crm->especializacoes) {
+                            foreach ($crm->especializacoes as $especializacao) {
+                                if(!isset($especializacao['id'])) {
+                                    if(MedicoCrmEspecializacao::where('medico_crm_id', $newCrm->id)->count() >= 2) {
+                                        DB::rollBack();
+                                        return Response::json(['message' => 'Um CRM não pode ter mais que 2 especializações'], 422);
+                                    }
+
+                                    $newEspecializacao = new MedicoCrmEspecializacao($especializacao);
+                                    $newEspecializacao->medico__crm_id = $newCrm->id;
+                                } else {
+                                    $newEspecializacao = MedicoCrmEspecializacao::find($especializacao['id']);
+                                    $newEspecializacao->fill($especializacao);
+                                }
+
+                                $validator = Validator::make($newEspecializacao->getAttributes(), $newEspecializacao->rules());
+
+                                if($validator->fails()) {
+                                    DB::rollBack();
+                                    return Response::json(['message' => $validator->errors()->all()], 422);
+                                }
+
+                                $newEspecializacao->save();
+                            }
                         }
-
-                        $validator = Validator::make($newEspecializacao->getAttributes(), $newEspecializacao->rules());
-
-                        if($validator->fails()) {
-                            DB::rollBack();
-                            return Response::json(['message' => $validator->errors()->all()], 422);
-                        }
-
-                        $newEspecializacao->save();
                     }
                 }
             } else {
