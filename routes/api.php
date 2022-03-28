@@ -25,8 +25,9 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
 
 Route::group(['middleware' => 'api'], function () {
     Route::get('especializacoes', [\App\Http\Controllers\Api\EspecializacaoController::class, 'index']);
+    Route::get('usuarios/validate', [UserController::class, 'validateData']);
 });
 
 Route::group(['middleware' => 'auth:api',], function () {
-    Route::get('usuarios/validate', [UserController::class, 'validateData']);
+
 });
