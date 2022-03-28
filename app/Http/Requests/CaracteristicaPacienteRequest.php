@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\CaracteristicaPaciente;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CaracteristicaPacienteRequest extends FormRequest
@@ -23,12 +24,6 @@ class CaracteristicaPacienteRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'cpf'         => 'required|max:11',
-            'peso'        => 'required|decimal',
-            'altura'      => 'required|decimal',
-            'sexo'        => 'required|in:feminino,masculino,outros',
-            'paciente_id' => 'required|exists:users|unique:caracteristicas_paciente,paciente_id',
-        ];
+       return (new CaracteristicaPaciente)->rules();
     }
 }

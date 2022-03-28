@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\CaracteristicaMedico;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CaracteristicaMedicoRequest extends FormRequest
@@ -23,10 +24,6 @@ class CaracteristicaMedicoRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'estado_sigla'     => 'required',
-            'descricao'        => 'nullable|max:500', //todo: analisar tamanho de caracteres
-            'medico_id'        => 'required|exists:users|unique:caracteristicas_medicos,medico_id',
-        ];
+       return (new CaracteristicaMedico())->rules();
     }
 }

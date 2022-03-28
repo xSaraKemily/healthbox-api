@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Api\UserController;
+use App\Http\Requests\StoreUserRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -13,7 +17,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
     /**
@@ -39,6 +43,7 @@ class AuthController extends Controller
      */
     public function me()
     {
+        //todo: fazer retornar as caracteristicas
         return response()->json(auth()->user());
     }
 
@@ -73,10 +78,38 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $request = [
+            'email'    => 'sara@teste.com',
+            'name'     => 'sara kemily',
+            'password' => '12345',
+            'tipo'     => 'M',
+            'caracteristicas' => [
+                'descricao'    => 'teste sara',
+            ],
+            'crms' => [
+               [ 'estado_sigla' => 'SC', 'crm' => '23445'],
+               ['id' => 1, 'estado_sigla' => 'SP', 'crm' => '8888']
+            ],
+            'especializacoes' => [
+               [ 'nome' => 'aaaa'],
+               ['id' => 2, 'nome' => 'a555aa'],
+               [ 'nome' => 'aa3333aa']
+            ]
+        ];
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
+    }
+
+    /**
+     * Register a User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function register(Request $request) {
+        return (new UserController())->store(StoreUserRequest::capture($request));
     }
 }

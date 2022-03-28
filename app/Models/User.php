@@ -20,6 +20,7 @@ class User extends Authenticatable  implements JWTSubject
     protected $fillable = [
         'name',
         'email',
+        'tipo',
         'password',
         'data_nascimento',
         'telefone',
@@ -65,5 +66,16 @@ class User extends Authenticatable  implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function caracteristica()
+    {
+        //se for medico
+        if($this->tipo == 'M') {
+            return $this->hasOne(CaracteristicaMedico::class, 'medico_id', 'id');
+        } else {
+            //se for paciente
+            return $this->hasOne(CaracteristicaPaciente::class, 'paciente_id', 'id');
+        }
     }
 }

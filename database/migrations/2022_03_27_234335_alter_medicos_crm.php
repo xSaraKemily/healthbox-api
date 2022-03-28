@@ -13,11 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('caracteristicas_medico', function (Blueprint $table) {
-           $table->dropForeign('caracteristicas_medico_especializacao_id_foreign');
-           $table->dropColumn('especializacao_id');
-           $table->dropColumn('crm');
-           $table->dropColumn('estado_sigla');
+        Schema::table('medicos_crm', function (Blueprint $table) {
+            $table->string('estado_sigla', 2)->after('crm');
         });
     }
 

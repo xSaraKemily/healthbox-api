@@ -4,7 +4,7 @@ namespace  App\Models\Enums;
 
 class Estado
 {
-    public function estados($estadoSigla = null)
+    public static function estados($estadoSigla = null)
     {
         $estados = [
             'AC'=>'Acre',

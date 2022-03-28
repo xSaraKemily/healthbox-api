@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\MedicoCrm;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,22 +25,6 @@ class MedicoCrmRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'medico_id' => [
-                'required',
-                'exists:users',
-                Rule::unique('medicos_crm')->where(function ($query) {
-                    return $query->where('medico_id', $this->medico_id)
-                        ->where('crm', $this->crm);
-                }),
-            ],
-            'crm' => [
-                'required',
-                Rule::unique('medicos_crm')->where(function ($query) {
-                    return $query->where('medico_id', $this->medico_id)
-                        ->where('crm', $this->crm);
-                }),
-            ],
-        ];
+        return (new MedicoCrm())->rules();
     }
 }
