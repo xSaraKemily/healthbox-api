@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends FormRequest
@@ -13,7 +14,7 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,15 +24,6 @@ class StoreUserRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'name'            => 'required|max:255',
-            'tipo'            => 'required|in:M,P',
-            'email'           => 'required|unique:users',
-            'password'        => 'required',
-            'data_nascimento' => 'nullable|date',
-            'telefone'        => 'nullable|max:9|min:8',
-            'foto_path'       => 'nullable',
-            'ativo'           => 'required|in:0,1',
-        ];
+      return (new User())->rules();
     }
 }

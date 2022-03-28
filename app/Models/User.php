@@ -28,6 +28,10 @@ class User extends Authenticatable  implements JWTSubject
         'ativo',
     ];
 
+    protected $attributes = [
+        'ativo' => true
+    ];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -66,6 +70,20 @@ class User extends Authenticatable  implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function rules()
+    {
+        return [
+            'name'            => 'required|max:255',
+            'tipo'            => 'required|in:M,P',
+            'email'           => 'required|unique:users',
+            'password'        => 'required',
+            'data_nascimento' => 'nullable|date',
+            'telefone'        => 'nullable|max:9|min:8',
+            'foto_path'       => 'nullable',
+            'ativo'           => 'required|in:0,1',
+        ];
     }
 
     public function caracteristica()

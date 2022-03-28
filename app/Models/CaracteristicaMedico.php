@@ -19,8 +19,8 @@ class CaracteristicaMedico extends Model
     public function rules()
     {
         return [
-            'descricao'        => 'nullable|max:500', //todo: analisar tamanho de caracteres
-            'medico_id'        => 'required|exists:users|unique:caracteristicas_medicos,medico_id',
+            'descricao' => 'nullable|max:1000',
+            'medico_id' => 'required|exists:users|unique:caracteristicas_medico',
         ];
     }
 

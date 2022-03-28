@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\CaracteristicaMedico;
 use App\Models\CaracteristicaPaciente;
-use App\Models\Especializacao;
 use App\Models\MedicoCrm;
 use App\Models\MedicoEspecializacao;
 use App\Models\User;
@@ -14,13 +14,27 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function store(StoreUserRequest $request) : JsonResponse
+    /**
+     * Store a new blog post.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request) : JsonResponse
     {
+        $user = new User($request->all());
+
+        $validator = Validator::make($user->getAttributes(), $user->rules());
+
+        if($validator->fails()) {
+            return Response::json(['message' => $validator->errors()->all()], 422);
+        }
+
         $senha =  Hash::make($request->password);
 
         $request->merge(['password' => $senha]);
@@ -38,7 +52,7 @@ class UserController extends Controller
 
                     $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
 
-                    if($validator->failed()) {
+                    if($validator->fails()) {
                         DB::rollBack();
                         return Response::json(['message' => $validator->errors()->all()], 422);
                     }
@@ -53,7 +67,7 @@ class UserController extends Controller
 
                         $validator = Validator::make($crm->getAttributes(), $crm->rules());
 
-                        if($validator->failed()) {
+                        if($validator->fails()) {
                             DB::rollBack();
                             return Response::json(['message' => $validator->errors()->all()], 422);
                         }
@@ -69,7 +83,7 @@ class UserController extends Controller
 
                         $validator = Validator::make($especializacao->getAttributes(), $especializacao->rules());
 
-                        if($validator->failed()) {
+                        if($validator->fails()) {
                             DB::rollBack();
                             return Response::json(['message' => $validator->errors()->all()], 422);
                         }
@@ -85,7 +99,7 @@ class UserController extends Controller
 
                     $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
 
-                    if($validator->failed()) {
+                    if($validator->fails()) {
                         DB::rollBack();
                         return Response::json(['message' => $validator->errors()->all()], 422);
                     }
@@ -101,7 +115,11 @@ class UserController extends Controller
         }
 
         DB::commit();
-        return Response::json(['message' => 'Usuário salvo com sucesso']);
+
+        return Response::json([
+            'message' => 'Usuário salvo com sucesso',
+            'user'    => $user,
+        ]);
     }
 
     public function update(StoreUserRequest $request, $id) : JsonResponse
@@ -137,7 +155,7 @@ class UserController extends Controller
 
                         $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
 
-                        if($validator->failed()) {
+                        if($validator->fails()) {
                             return Response::json(['message' => $validator->errors()->all()] , 422);
                         }
 
@@ -159,7 +177,7 @@ class UserController extends Controller
 
                         $validator = Validator::make($newCrm->getAttributes(), $newCrm->rules());
 
-                        if($validator->failed()) {
+                        if($validator->fails()) {
                             DB::rollBack();
                             return Response::json(['message' => $validator->errors()->all()], 422);
                         }
@@ -180,7 +198,7 @@ class UserController extends Controller
 
                         $validator = Validator::make($newEspecializacao->getAttributes(), $newEspecializacao->rules());
 
-                        if($validator->failed()) {
+                        if($validator->fails()) {
                             DB::rollBack();
                             return Response::json(['message' => $validator->errors()->all()], 422);
                         }
@@ -195,7 +213,7 @@ class UserController extends Controller
                 if($caracteristicas) {
                     $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
 
-                    if($validator->failed()) {
+                    if($validator->fails()) {
                         return Response::json(['message' => $validator->errors()->all()], 422);
                     }
                 }
