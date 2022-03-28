@@ -29,6 +29,6 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
 
 
 
-Route::group(['middleware' => 'auth:api'], function () {
+Route::group(['middleware' => 'api'], function () {
     Route::get('especializacoes', [\App\Http\Controllers\Api\EspecializacaoController::class, 'index']);
 });
