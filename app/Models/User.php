@@ -98,4 +98,9 @@ class User extends Authenticatable  implements JWTSubject
             return $this->hasOne(CaracteristicaPaciente::class, 'paciente_id', 'id');
         }
     }
+
+    public function crms()
+    {
+        return $this->hasMany(MedicoCrm::class, 'medico_id', 'id');
+    }
 }

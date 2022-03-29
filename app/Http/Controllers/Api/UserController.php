@@ -255,7 +255,11 @@ class UserController extends Controller
         }
 
         if($request->filled('crm')){
-            $medicoCrm = MedicoCrm::where('crm', $request->crm)->first();
+            if(!$request->filled('estado_sigla')) {
+                return Response::json(['message' => 'A sigla do estado é obrigatória para validar o CRM.'], 422);
+            }
+
+            $medicoCrm = MedicoCrm::where('crm', $request->crm)->where('estado_sigla', $request->estado_sigla)->first();
 
             $bool = true;
             if($medicoCrm) {

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Api\UserController;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -40,8 +42,22 @@ class AuthController extends Controller
      */
     public function me()
     {
-        //todo: fazer retornar as caracteristicas
-        return response()->json(auth()->user());
+        $user = User::find(auth()->user()->id);
+
+        $user->caracteristica->makeHidden(['created_at', 'updated_at']);
+
+        if($user->tipo == 'M') {
+            foreach ($user->crms as $crm) {
+                $crm->makeHidden(['created_at', 'updated_at']);
+                foreach ($crm->especializacoes as $espec) {
+                    $espec->nome = $espec->especializacao->nome;
+
+                    $espec->makeHidden(['especializacao', 'created_at', 'updated_at']);
+                }
+            }
+        }
+
+        return response()->json($user);
     }
 
     /**

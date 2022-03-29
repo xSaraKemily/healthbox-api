@@ -26,6 +26,6 @@ class CaracteristicaMedico extends Model
 
     public function medico()
     {
-        $this->hasOne(User::class, 'id', 'medico_id');
+        $this->belongsTo(User::class, 'id', 'medico_id');
     }
 }

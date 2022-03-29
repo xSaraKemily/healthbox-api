@@ -50,4 +50,9 @@ class MedicoCrm extends Model
     {
         return Estado::estados($this->estado_sigla);
     }
+
+    public function especializacoes()
+    {
+        return $this->hasMany(MedicoCrmEspecializacao::class, 'medico_crm_id', 'id');
+    }
 }
