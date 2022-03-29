@@ -285,4 +285,19 @@ class UserController extends Controller
 
         return Response::json($validacao, 200);
     }
+
+    public function destroy($id)
+    {
+        try {
+            User::find($id)->delete();
+        } catch (\Exception $e) {
+            Log::error('Erro ao deletar usuario '. $e);
+
+            return Response::json(['message' => 'Erro ao deletar usuário'], 500);
+        }
+
+        auth()->logout();
+
+        return Response::json(['message' => 'Usuário deletado com sucesso.'], 500);
+    }
 }

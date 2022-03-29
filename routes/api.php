@@ -30,5 +30,5 @@ Route::group(['middleware' => 'api'], function () {
 
 Route::group(['middleware' => 'auth:api',], function () {
     Route::put('usuarios/{id}', [UserController::class, 'update']);
-//    Route::delete('usuarios', [UserController::class, 'destroy']);
+    Route::delete('usuarios/{id}', [UserController::class, 'destroy']);
 });
