@@ -241,7 +241,7 @@ class UserController extends Controller
         }
 
         DB::commit();
-        return Response::json('Usuário atualizaco com sucesso');
+        return Response::json(['message' => 'Usuário atualizaco com sucesso']);
     }
 
     public function validateData(Request $request) : JsonResponse
@@ -300,6 +300,6 @@ class UserController extends Controller
 
         auth()->logout();
 
-        return Response::json(['message' => 'Usuário deletado com sucesso.'], 500);
+        return Response::json(['message' => 'Usuário deletado com sucesso.'], 200);
     }
 }
