@@ -81,7 +81,7 @@ class User extends Authenticatable  implements JWTSubject
             'email'           => 'required|unique:users',
             'password'        => 'required',
             'data_nascimento' => 'nullable|date',
-            'telefone'        => 'nullable|max:9|min:8',
+            'telefone'        => 'nullable|max:30|min:8',
             'foto_path'       => 'nullable',
             'sexo'            => 'required|in:F,M,O',
             'ativo'           => 'required|in:0,1',

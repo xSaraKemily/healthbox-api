@@ -26,7 +26,7 @@ class CaracteristicaPaciente extends Model
     public function rules()
     {
         return [
-            'cpf'         => 'required|max:11',
+            'cpf'         => 'required|max:30',
             'peso'        => 'required|numeric',
             'altura'      => 'required|numeric',
             'paciente_id' => 'required|exists:users,id|unique:caracteristicas_paciente,paciente_id',
