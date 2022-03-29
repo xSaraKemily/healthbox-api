@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Validation\Rule;
 
 class CaracteristicaPaciente extends Model
 {
@@ -30,7 +31,11 @@ class CaracteristicaPaciente extends Model
             'cpf'         => 'required|max:30',
             'peso'        => 'required|numeric',
             'altura'      => 'required|numeric',
-            'paciente_id' => 'required|exists:users,id|unique:caracteristicas_paciente,paciente_id',
+            'paciente_id' => [
+                'required',
+                'exists:users,id',
+                Rule::unique('caracteristicas_paciente')->where('paciente_id', $this->paciente_id)->ignore($this->id)
+            ],
         ];
     }
 

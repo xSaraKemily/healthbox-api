@@ -27,7 +27,7 @@ class MedicoCrmEspecializacao extends Model
                 Rule::unique('medico_crm_especializacoes')->where(function ($query) {
                     return $query->where('medico_crm_id', $this->medico_crm_id)
                         ->where('especializacao_id', $this->especializacao_id);
-                }),
+                })->ignore($this->id),
             ],
             'especializacao_id' => [
                 'required',
@@ -35,7 +35,7 @@ class MedicoCrmEspecializacao extends Model
                 Rule::unique('medico_crm_especializacoes')->where(function ($query) {
                     return $query->where('medico_crm_id', $this->medico_crm_id)
                         ->where('especializacao_id', $this->especializacao_id);
-                }),
+                })->ignore($this->id),
             ]
         ];
     }
