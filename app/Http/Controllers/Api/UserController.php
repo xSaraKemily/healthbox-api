@@ -138,6 +138,8 @@ class UserController extends Controller
         if(!Hash::check($request->password, $user->password)) {
             $senha =  Hash::make($request->password);
             $request->merge(['password' => $senha]);
+        } else {
+            $request->merge(['password' => $user->password]);
         }
 
         //sobrescreve tipo de usuario do request pois nao pode atualizar
