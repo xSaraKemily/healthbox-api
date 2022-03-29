@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 
 class CaracteristicaMedico extends Model
 {
@@ -20,7 +21,11 @@ class CaracteristicaMedico extends Model
     {
         return [
             'descricao' => 'nullable|max:1000',
-            'medico_id' => 'required|exists:users,id|unique:caracteristicas_medico',
+            'medico_id' => [
+                'required',
+                'exists:users,id',
+                Rule::unique('caracteristicas_medico')->where('medico_id', $this->medico_id)->ignore($this->id)
+            ]
         ];
     }
 

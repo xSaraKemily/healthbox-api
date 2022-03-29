@@ -127,7 +127,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(StoreUserRequest $request, $id) : JsonResponse
+    public function update(Request $request, $id) : JsonResponse
     {
         $user = User::find($id);
 
@@ -143,6 +143,7 @@ class UserController extends Controller
         //sobrescreve tipo de usuario do request pois nao pode atualizar
         $request->merge(['tipo'=> $user->tipo]);
 
+        DB::beginTransaction();
         try {
             $user->fill($request->all());
 
@@ -224,6 +225,7 @@ class UserController extends Controller
                     $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
 
                     if($validator->fails()) {
+                        DB::rollBack();
                         return Response::json(['message' => $validator->errors()->all()], 422);
                     }
                 }
@@ -231,11 +233,12 @@ class UserController extends Controller
                 $caracteristicas->save();
             }
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Erro ao atualizar usuario '. $e);
-
             return Response::json('Erro ao atualizar usuário', 500);
         }
 
+        DB::commit();
         return Response::json('Usuário atualizaco com sucesso');
     }
 
