@@ -135,9 +135,11 @@ class UserController extends Controller
             return Response::json(['message' => 'Usuário não encontrado'], 404);
         }
 
-        if(!Hash::check($request->password, $user->password)) {
-            $senha =  Hash::make($request->password);
-            $request->merge(['password' => $senha]);
+        if($request->filled('password')) {
+            if(!Hash::check($request->password, $user->password)) {
+                $senha =  Hash::make($request->password);
+                $request->merge(['password' => $senha]);
+            }
         } else {
             $request->merge(['password' => $user->password]);
         }
