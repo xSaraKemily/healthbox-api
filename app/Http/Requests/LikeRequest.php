@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Like;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class LikeRequest extends FormRequest
 {
@@ -23,10 +25,6 @@ class LikeRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'usuario_id' => 'required|exists:users',
-            'opiniao_id' => 'required|exists:opinioes',
-            'is_like'    => 'in:0,1'
-        ];
+        return (new Like())->rules();
     }
 }

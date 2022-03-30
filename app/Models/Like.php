@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Validation\Rule;
 
 class Like extends Model
 {
@@ -17,6 +18,22 @@ class Like extends Model
         'opiniao_id',
         'is_like'
     ];
+
+    public function rules()
+    {
+        return [
+            'usuario_id' => [
+                'required',
+                'exists:users,id',
+                Rule::unique('likes')->where(function ($query) {
+                    return $query->where('usuario_id', $this->usuario_id)
+                        ->where('opiniao_id', $this->opiniao_id);
+                })->ignore($this->id),
+            ],
+            'opiniao_id' => 'required|exists:opinioes,id',
+            'is_like'    => 'in:0,1'
+        ];
+    }
 
     public function usuario()
     {
