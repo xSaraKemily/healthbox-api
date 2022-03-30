@@ -222,15 +222,23 @@ class UserController extends Controller
                     }
                 }
             } else {
-                //se for paciente
-                $caracteristicas = CaracteristicaPaciente::where('paciente_id', $user->id)->first();
+                if($request->filled('caracteristicas')) {
+                    //se for paciente
 
-                if($caracteristicas) {
-                    $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
+                    $caracteristicas = CaracteristicaPaciente::where('paciente_id', $user->id)->first();
 
-                    if($validator->fails()) {
-                        DB::rollBack();
-                        return Response::json(['message' => $validator->errors()->all()], 422);
+                    if($caracteristicas) {
+                        $caracteristicas->fill($request->all());
+
+                        $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
+
+                        if($validator->fails()) {
+                            return Response::json(['message' => $validator->errors()->all()] , 422);
+                        }
+
+                        if($caracteristicas->isDirty()) {
+                            $caracteristicas->save();
+                        }
                     }
                 }
 
