@@ -24,7 +24,7 @@ class CaracteristicaMedico extends Model
             'descricao' => 'nullable|max:1000',
             'medico_id' => [
                 'required',
-                'exists:users,id',
+                Rule::exists('users', 'id')->where('tipo', 'M'),
                 Rule::unique('caracteristicas_medico')->where('medico_id', $this->medico_id)->ignore($this->id)
             ]
         ];

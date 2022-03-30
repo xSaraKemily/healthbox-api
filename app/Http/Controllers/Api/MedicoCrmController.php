@@ -8,6 +8,7 @@ use App\Http\Requests\MedicoCrmRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\CaracteristicaMedico;
 use App\Models\CaracteristicaPaciente;
+use App\Models\Enums\Estado;
 use App\Models\MedicoCrm;
 use App\Models\MedicoCrmEspecializacao;
 use App\Models\User;
@@ -25,6 +26,7 @@ class MedicoCrmController extends Controller
     {
         $crm = new MedicoCrm($request->all());
 
+        //todo adicionar validacao de estado
         DB::beginTransaction();
 
         try {
@@ -39,8 +41,51 @@ class MedicoCrmController extends Controller
         DB::commit();
 
         return Response::json([
-                'message' => 'CRM salvo com sucesso',
-                'user'    => $crm,
+            'message' => 'CRM salvo com sucesso',
+            'crm'     => $crm,
         ]);
+    }
+
+    public function update(Request $request, $id) : JsonResponse
+    {
+        $crm = MedicoCrm::find($id);
+
+        if(!$crm) {
+            return Response::json(['message' => 'CRM não encontrado.'], 404);
+        }
+
+        try {
+            $crm->fill($request->all());
+
+            $validator = Validator::make($crm->getAttributes(), $crm->rules());
+
+            if($validator->fails()) {
+                return Response::json(['message' => $validator->errors()->all()], 422);
+            }
+
+            $crm->save();
+        } catch (\Exception $e) {
+            Log::error('Erro ao atualizar CRM '. $e);
+
+            return Response::json(['message' => 'Erro ao atualizar CRM.'], 500);
+        }
+
+        return Response::json([
+            'message' => 'CRM atualizado com sucesso',
+            'crm'     => $crm,
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        try {
+            MedicoCrm::find($id)->delete();
+        } catch (\Exception $e) {
+            Log::error('Erro ao deletar CRM '. $e);
+
+            return Response::json(['message' => 'Erro ao deletar CRM'], 500);
+        }
+
+        return Response::json(['message' => 'CRM deletado com sucesso.']);
     }
 }

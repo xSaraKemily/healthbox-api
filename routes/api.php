@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\AuthController;
 use \App\Http\Controllers\Api\UserController;
+use \App\Http\Controllers\Api\LikeController;
+use \App\Http\Controllers\Api\MedicoCrmController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,5 +34,10 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::put('usuarios/{id}', [UserController::class, 'update']);
     Route::delete('usuarios/{id}', [UserController::class, 'destroy']);
 
-    Route::resource('likes', '\App\Http\Controllers\Api\LikeController');
+    Route::post('likes', [LikeController::class, 'store']);
+    Route::delete('likes',  [LikeController::class, 'destroy']);
+
+    Route::post('crms', [MedicoCrmController::class, 'store']);
+    Route::put('crms/{id}', [MedicoCrmController::class, 'update']);
+    Route::delete('crms/{id}', [MedicoCrmController::class, 'delete']);
 });

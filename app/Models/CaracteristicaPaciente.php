@@ -33,7 +33,7 @@ class CaracteristicaPaciente extends Model
             'altura'      => 'required|numeric',
             'paciente_id' => [
                 'required',
-                'exists:users,id',
+                Rule::exists('users', 'id')->where('tipo', 'P'),
                 Rule::unique('caracteristicas_paciente')->where('paciente_id', $this->paciente_id)->ignore($this->id)
             ],
         ];

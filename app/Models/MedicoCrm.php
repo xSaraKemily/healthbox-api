@@ -26,18 +26,15 @@ class MedicoCrm extends Model
             'estado_sigla' => 'required|max:2',
             'medico_id' => [
                 'required',
-                'exists:users,id',
+                Rule::exists('users', 'id')->where('tipo', 'M'),
                 Rule::unique('medicos_crm')->where(function ($query) {
                     return $query->where('medico_id', $this->medico_id)
-                        ->where('crm', $this->crm);
-                })->ignore($this->id),
+                        ->where('estado_sigla', $this->estado_sigla);
+                }),
             ],
             'crm' => [
                 'required',
-                Rule::unique('medicos_crm')->where(function ($query) {
-                    return $query->where('crm', $this->crm)
-                        ->where('estado_sigla', $this->estado_sigla);
-                })->ignore($this->id),
+                'unique:medicos_crm,crm',
             ],
         ];
     }
