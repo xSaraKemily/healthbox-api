@@ -161,7 +161,7 @@ class UserController extends Controller
                     $caracteristicas = CaracteristicaMedico::where('medico_id', $user->id)->first();
 
                     if($caracteristicas) {
-                        $caracteristicas->fill($request->all());
+                        $caracteristicas->fill($request->caracteristicas);
 
                         $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
 
@@ -228,7 +228,7 @@ class UserController extends Controller
                     $caracteristicas = CaracteristicaPaciente::where('paciente_id', $user->id)->first();
 
                     if($caracteristicas) {
-                        $caracteristicas->fill($request->all());
+                        $caracteristicas->fill($request->caracteristicas);
 
                         $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
 
