@@ -135,9 +135,11 @@ class UserController extends Controller
             return Response::json(['message' => 'Usuário não encontrado'], 404);
         }
 
-        if(!Hash::check($request->password, $user->password)) {
-            $senha =  Hash::make($request->password);
-            $request->merge(['password' => $senha]);
+        if($request->filled('password')) {
+            if(!Hash::check($request->password, $user->password)) {
+                $senha =  Hash::make($request->password);
+                $request->merge(['password' => $senha]);
+            }
         } else {
             $request->merge(['password' => $user->password]);
         }
@@ -159,7 +161,7 @@ class UserController extends Controller
                     $caracteristicas = CaracteristicaMedico::where('medico_id', $user->id)->first();
 
                     if($caracteristicas) {
-                        $caracteristicas->fill($request->all());
+                        $caracteristicas->fill($request->caracteristicas);
 
                         $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
 
@@ -220,15 +222,23 @@ class UserController extends Controller
                     }
                 }
             } else {
-                //se for paciente
-                $caracteristicas = CaracteristicaPaciente::where('paciente_id', $user->id)->first();
+                if($request->filled('caracteristicas')) {
+                    //se for paciente
 
-                if($caracteristicas) {
-                    $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
+                    $caracteristicas = CaracteristicaPaciente::where('paciente_id', $user->id)->first();
 
-                    if($validator->fails()) {
-                        DB::rollBack();
-                        return Response::json(['message' => $validator->errors()->all()], 422);
+                    if($caracteristicas) {
+                        $caracteristicas->fill($request->caracteristicas);
+
+                        $validator = Validator::make($caracteristicas->getAttributes(), $caracteristicas->rules());
+
+                        if($validator->fails()) {
+                            return Response::json(['message' => $validator->errors()->all()] , 422);
+                        }
+
+                        if($caracteristicas->isDirty()) {
+                            $caracteristicas->save();
+                        }
                     }
                 }
 
