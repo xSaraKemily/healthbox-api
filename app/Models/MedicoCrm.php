@@ -35,8 +35,8 @@ class MedicoCrm extends Model
             'crm' => [
                 'required',
                 Rule::unique('medicos_crm')->where(function ($query) {
-                    return $query->where('medico_id', $this->medico_id)
-                        ->where('crm', $this->crm);
+                    return $query->where('crm', $this->crm)
+                        ->where('estado_sigla', $this->estado_sigla);
                 })->ignore($this->id),
             ],
         ];
