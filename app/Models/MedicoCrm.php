@@ -23,18 +23,23 @@ class MedicoCrm extends Model
     public function rules()
     {
         return [
-            'estado_sigla' => 'required|max:2',
+            'estado_sigla' => [
+                'required',
+                'max:2',
+                  Rule::unique('medicos_crm')->where(function ($query) {
+                      return $query->where('medico_id', $this->medico_id)
+                          ->where('estado_sigla', $this->estado_sigla);
+                  })->ignore($this->id),
+            ],
             'medico_id' => [
                 'required',
                 Rule::exists('users', 'id')->where('tipo', 'M'),
-                Rule::unique('medicos_crm')->where(function ($query) {
-                    return $query->where('medico_id', $this->medico_id)
-                        ->where('estado_sigla', $this->estado_sigla);
-                }),
             ],
             'crm' => [
                 'required',
-                'unique:medicos_crm,crm',
+                Rule::unique('medicos_crm')->where(function ($query) {
+                    return $query->where('crm', $this->crm);
+                })->ignore($this->id),
             ],
         ];
     }

@@ -39,5 +39,5 @@ Route::group(['middleware' => 'auth:api',], function () {
 
     Route::post('crms', [MedicoCrmController::class, 'store']);
     Route::put('crms/{id}', [MedicoCrmController::class, 'update']);
-    Route::delete('crms/{id}', [MedicoCrmController::class, 'delete']);
+    Route::delete('crms/{id}', [MedicoCrmController::class, 'destroy']);
 });

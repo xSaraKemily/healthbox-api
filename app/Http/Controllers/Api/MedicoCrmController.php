@@ -2,21 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\MedicoCrmRequest;
-use App\Http\Requests\StoreUserRequest;
-use App\Models\CaracteristicaMedico;
-use App\Models\CaracteristicaPaciente;
-use App\Models\Enums\Estado;
 use App\Models\MedicoCrm;
-use App\Models\MedicoCrmEspecializacao;
-use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use App\Actions\ValidaEstadoAction;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\MedicoCrmRequest;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 
@@ -26,7 +19,10 @@ class MedicoCrmController extends Controller
     {
         $crm = new MedicoCrm($request->all());
 
-        //todo adicionar validacao de estado
+        if(!ValidaEstadoAction::run($request->estado_sigla)) {
+            return Response::json(['message' => 'Estado inválido.'], 422);
+        }
+
         DB::beginTransaction();
 
         try {
@@ -56,6 +52,10 @@ class MedicoCrmController extends Controller
 
         try {
             $crm->fill($request->all());
+
+            if(!ValidaEstadoAction::run($crm->estado_sigla)) {
+                return Response::json(['message' => 'Estado inválido.'], 422);
+            }
 
             $validator = Validator::make($crm->getAttributes(), $crm->rules());
 

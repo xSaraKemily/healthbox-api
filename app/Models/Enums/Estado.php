@@ -37,7 +37,11 @@ class Estado
         ];
 
         if($estadoSigla) {
-            return $estados[$estadoSigla];
+            if(array_key_exists($estadoSigla, $estados)) {
+                return $estados[$estadoSigla];
+            }
+
+            return null;
         }
 
         return $estados;
