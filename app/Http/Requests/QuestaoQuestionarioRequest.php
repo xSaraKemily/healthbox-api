@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class QuestaoQuestionarioRequest extends FormRequest
 {
@@ -27,5 +29,17 @@ class QuestaoQuestionarioRequest extends FormRequest
             'questionario_id' => 'required:exists:questionarios',
             'questao_id'      => 'required:exists:questoes',
         ];
+    }
+
+    public function wantsJson()
+    {
+        return true;
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => $validator->errors()->all(),
+        ], 422));
     }
 }

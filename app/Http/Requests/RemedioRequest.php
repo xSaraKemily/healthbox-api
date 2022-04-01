@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class RemedioRequest extends FormRequest
 {
@@ -29,5 +31,17 @@ class RemedioRequest extends FormRequest
             'link_bula'     => 'nullable|max:255',
             'api_id'        => 'required|max:255',
         ];
+    }
+
+    public function wantsJson()
+    {
+        return true;
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => $validator->errors()->all(),
+        ], 422));
     }
 }

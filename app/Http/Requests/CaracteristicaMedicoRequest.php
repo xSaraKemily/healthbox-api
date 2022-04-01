@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Models\CaracteristicaMedico;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CaracteristicaMedicoRequest extends FormRequest
 {
@@ -25,5 +27,17 @@ class CaracteristicaMedicoRequest extends FormRequest
     public function rules()
     {
        return (new CaracteristicaMedico())->rules();
+    }
+
+    public function wantsJson()
+    {
+        return true;
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => $validator->errors()->all(),
+        ], 422));
     }
 }

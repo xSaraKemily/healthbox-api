@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class RemedioTratamentoRequest extends FormRequest
 {
@@ -32,5 +34,17 @@ class RemedioTratamentoRequest extends FormRequest
             'remedio_id'     => 'required|exists:remedios',
             'tratamento_id'  => 'required|exists:tratamentos',
         ];
+    }
+
+    public function wantsJson()
+    {
+        return true;
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => $validator->errors()->all(),
+        ], 422));
     }
 }
