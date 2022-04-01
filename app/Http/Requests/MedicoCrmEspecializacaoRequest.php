@@ -17,6 +17,10 @@ class MedicoCrmEspecializacaoRequest extends FormRequest
      */
     public function authorize()
     {
+        if(auth()->user()->tipo == 'M') {
+            return true;
+        }
+
         return false;
     }
 
@@ -27,7 +31,20 @@ class MedicoCrmEspecializacaoRequest extends FormRequest
      */
     public function rules()
     {
-        return (new MedicoCrmEspecializacao())->rules();
+        return [
+            'medico_crm_id' => [
+                'required',
+                'exists:medicos_crm,id',
+            ],
+            'especializacao_id' => [
+                'required',
+                'exists:especializacoes,id',
+                Rule::unique('medico_crm_especializacoes')->where(function ($query) {
+                    return $query->where('medico_crm_id', $this->request->get('medico_crm_id'))
+                        ->where('especializacao_id', $this->request->get('especializacao_id'));
+                })->ignore($this->request->get('id')),
+            ]
+        ];
     }
 
     public function wantsJson()

@@ -17,7 +17,11 @@ class MedicoCrmRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        if(auth()->user()->tipo == 'M') {
+            return true;
+        }
+
+        return false;
     }
 
     /**

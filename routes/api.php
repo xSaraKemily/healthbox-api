@@ -5,6 +5,7 @@ use \App\Http\Controllers\AuthController;
 use \App\Http\Controllers\Api\UserController;
 use \App\Http\Controllers\Api\LikeController;
 use \App\Http\Controllers\Api\MedicoCrmController;
+use \App\Http\Controllers\Api\EspecializacaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +27,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
 });
 
 Route::group(['middleware' => 'api'], function () {
-    Route::get('especializacoes', [\App\Http\Controllers\Api\EspecializacaoController::class, 'index']);
+    Route::get('especializacoes', [EspecializacaoController::class, 'index']);
     Route::get('usuarios/validate', [UserController::class, 'validateData']);
 });
 
@@ -40,4 +41,7 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::post('crms', [MedicoCrmController::class, 'store']);
     Route::put('crms/{id}', [MedicoCrmController::class, 'update']);
     Route::delete('crms/{id}', [MedicoCrmController::class, 'destroy']);
+
+    Route::post('especializacoes', [EspecializacaoController::class, 'store']);
+    Route::delete('especializacoes/{id}', [EspecializacaoController::class, 'destroy']);
 });
