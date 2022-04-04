@@ -41,7 +41,8 @@ class MedicoCrmEspecializacaoRequest extends FormRequest
                 'exists:especializacoes,id',
                 Rule::unique('medico_crm_especializacoes')->where(function ($query) {
                     return $query->where('medico_crm_id', $this->request->get('medico_crm_id'))
-                        ->where('especializacao_id', $this->request->get('especializacao_id'));
+                        ->where('especializacao_id', $this->request->get('especializacao_id'))
+                        ->whereNull('deleted_at');;
                 })->ignore($this->request->get('id')),
             ]
         ];

@@ -27,7 +27,8 @@ class Like extends Model
                 'exists:users,id',
                 Rule::unique('likes')->where(function ($query) {
                     return $query->where('usuario_id', $this->usuario_id)
-                        ->where('opiniao_id', $this->opiniao_id);
+                        ->where('opiniao_id', $this->opiniao_id)
+                        ->whereNull('deleted_at');
                 })->ignore($this->id),
             ],
             'opiniao_id' => 'required|exists:opinioes,id',

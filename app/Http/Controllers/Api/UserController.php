@@ -257,7 +257,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         try {
-            User::find($id)->delete();
+            User::find($id)->forceDelete();
         } catch (\Exception $e) {
             Log::error('Erro ao deletar usuario '. $e);
 

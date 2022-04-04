@@ -34,7 +34,7 @@ class CaracteristicaPaciente extends Model
             'paciente_id' => [
                 'required',
                 Rule::exists('users', 'id')->where('tipo', 'P'),
-                Rule::unique('caracteristicas_paciente')->where('paciente_id', $this->paciente_id)->ignore($this->id)
+                Rule::unique('caracteristicas_paciente') ->whereNull('deleted_at')->where('paciente_id', $this->paciente_id)->ignore($this->id)
             ],
         ];
     }

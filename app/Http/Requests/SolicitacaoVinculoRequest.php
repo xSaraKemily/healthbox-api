@@ -32,7 +32,8 @@ class SolicitacaoVinculoRequest extends FormRequest
                 'exists:users',
                 Rule::unique('solicitacoes_vinculos')->where(function ($query) {
                     return $query->where('medico_id', $this->medico_id)
-                        ->where('paciente_id', $this->paciente_id);
+                        ->where('paciente_id', $this->paciente_id)
+                        ->whereNull('deleted_at');
                 }),
             ],
             'paciente_id'   => [
@@ -40,7 +41,8 @@ class SolicitacaoVinculoRequest extends FormRequest
                 'exists:users',
                 Rule::unique('solicitacoes_vinculos')->where(function ($query) {
                     return $query->where('medico_id', $this->medico_id)
-                        ->where('paciente_id', $this->paciente_id);
+                        ->where('paciente_id', $this->paciente_id)
+                        ->whereNull('deleted_at');
                 }),
             ],
             'vinculado'     => 'required|in:0,1'

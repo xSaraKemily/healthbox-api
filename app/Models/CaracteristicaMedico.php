@@ -25,7 +25,7 @@ class CaracteristicaMedico extends Model
             'medico_id' => [
                 'required',
                 Rule::exists('users', 'id')->where('tipo', 'M'),
-                Rule::unique('caracteristicas_medico')->where('medico_id', $this->medico_id)->ignore($this->id)
+                Rule::unique('caracteristicas_medico')->where('medico_id', $this->medico_id) ->whereNull('deleted_at')->ignore($this->id)
             ]
         ];
     }

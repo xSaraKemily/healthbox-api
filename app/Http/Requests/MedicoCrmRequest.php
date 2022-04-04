@@ -38,12 +38,16 @@ class MedicoCrmRequest extends FormRequest
                 Rule::exists('users', 'id')->where('tipo', 'M'),
                 Rule::unique('medicos_crm')->where(function ($query) {
                     return $query->where('medico_id', $this->request->get('medico_id'))
-                        ->where('estado_sigla', $this->request->get('estado_sigla'));
+                        ->where('estado_sigla', $this->request->get('estado_sigla'))
+                        ->whereNull('deleted_at');
                 }),
             ],
             'crm' => [
                 'required',
-                'unique:medicos_crm,crm',
+                Rule::unique('medicos_crm')->where(function ($query) {
+                    return $query->where('crm', $this->request->get('crm'))
+                        ->whereNull('deleted_at');
+                }),
             ],
         ];
     }
