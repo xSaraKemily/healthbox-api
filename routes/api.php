@@ -6,6 +6,7 @@ use \App\Http\Controllers\Api\UserController;
 use \App\Http\Controllers\Api\LikeController;
 use \App\Http\Controllers\Api\MedicoCrmController;
 use \App\Http\Controllers\Api\EspecializacaoController;
+use \App\Http\Controllers\Api\RemedioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,4 +45,6 @@ Route::group(['middleware' => 'auth:api',], function () {
 
     Route::post('especializacoes', [EspecializacaoController::class, 'store']);
     Route::delete('especializacoes/{id}', [EspecializacaoController::class, 'destroy']);
+
+    Route::get('remedios', [RemedioController::class, 'index']);
 });

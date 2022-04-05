@@ -15,7 +15,17 @@ class Remedio extends Model
     protected $fillable = [
         'nome',
         'fabricante',
-        'link_bula',
+        'hash_pdf_bula',
         'api_id',
     ];
+
+    public function rules()
+    {
+        return [
+            'nome'              => 'required|max:255',
+            'fabricante'        => 'required|max:255',
+            'hash_pdf_bula'     => 'nullable|max:255',
+            'api_id'            => 'required|max:255',
+        ];
+    }
 }

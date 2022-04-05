@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Remedio;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -15,7 +16,7 @@ class RemedioRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,12 +26,7 @@ class RemedioRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'nome'          => 'required|max:255',
-            'fabricante'    => 'required|max:255',
-            'link_bula'     => 'nullable|max:255',
-            'api_id'        => 'required|max:255',
-        ];
+        (new Remedio())->rules();
     }
 
     public function wantsJson()
