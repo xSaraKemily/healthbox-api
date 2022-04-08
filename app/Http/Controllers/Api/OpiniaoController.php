@@ -26,7 +26,7 @@ class OpiniaoController extends Controller
 {
    public function index(Request $request)
    {
-       $opinioes =  Opiniao::select("*", DB::raw("COUNT(likes.id) as total_like"))->leftJoin('likes', 'likes.opiniao_id', 'opinioes.id');
+       $opinioes =  Opiniao::select("opinioes.*", DB::raw("COUNT(likes.id) as total_like"))->leftJoin('likes', 'likes.opiniao_id', 'opinioes.id');
 
        if($request->filled('ativo')) {
            $opinioes = $opinioes->where('ativo', $request->ativo);
