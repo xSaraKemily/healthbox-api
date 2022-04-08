@@ -43,7 +43,7 @@ class OpiniaoController extends Controller
            $opinioes = $opinioes->orderBy('total_like', $request->order_eficaz);
        }
 
-       return $opinioes->paginate(10);
+       return $opinioes->groupBy('opinioes.id', 'likes.id')->paginate(10);
    }
 
     public function store(OpiniaoRequest $request) : JsonResponse
