@@ -7,6 +7,8 @@ use \App\Http\Controllers\Api\LikeController;
 use \App\Http\Controllers\Api\MedicoCrmController;
 use \App\Http\Controllers\Api\EspecializacaoController;
 use \App\Http\Controllers\Api\RemedioController;
+use \App\Http\Controllers\Api\OpiniaoController;
+use \App\Http\Controllers\Api\TratamentoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,4 +49,13 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::delete('especializacoes/{id}', [EspecializacaoController::class, 'destroy']);
 
     Route::get('remedios', [RemedioController::class, 'index']);
+
+    Route::get('opinioes', [OpiniaoController::class, 'index']);
+    Route::post('opinioes', [OpiniaoController::class, 'store']);
+    Route::put('opinioes', [OpiniaoController::class, 'update']);
+    Route::delete('opinioes', [OpiniaoController::class, 'destroy']);
+
+    Route::post('tratamentos', [TratamentoController::class, 'store']);
+    Route::put('tratamentos', [TratamentoController::class, 'update']);
+    Route::delete('tratamentos', [TratamentoController::class, 'destroy']);
 });

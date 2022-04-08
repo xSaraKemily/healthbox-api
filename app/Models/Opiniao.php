@@ -15,10 +15,19 @@ class Opiniao extends Model
     protected $fillable = [
         'descricao',
         'paciente_id',
-        'tratamento_id',
         'eficaz',
         'ativo'
     ];
+
+    public function rules()
+    {
+        return [
+            'descricao'     => 'required',
+            'paciente_id'   => 'required|exists:users,id',
+            'eficaz'        => 'required|in:0,1',
+            'ativo'         => 'required|in:0,1'
+        ];
+    }
 
     public function paciente()
     {
@@ -27,6 +36,6 @@ class Opiniao extends Model
 
     public function tratamento()
     {
-        $this->hasOne(Tratamento::class, 'id', 'tratamento_id');
+        $this->belongsTo(Tratamento::class, 'id', 'tratamento_id');
     }
 }

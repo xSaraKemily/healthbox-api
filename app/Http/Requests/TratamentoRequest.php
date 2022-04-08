@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Tratamento;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -25,11 +26,7 @@ class TratamentoRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'opiniao_id'        => 'required_without:acompanhamento_id|exists:opinioes',
-            'acompanhamento_id' => 'required_without:opiniao_id|exists:acompanhamentos',
-            'descricao'         => 'required'
-        ];
+        return (new Tratamento())->rules();
     }
 
     public function wantsJson()

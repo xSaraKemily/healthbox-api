@@ -34,7 +34,7 @@ class EspecializacaoController extends Controller
         $especializacao = new MedicoCrmEspecializacao($request->all());
 
         if(MedicoCrmEspecializacao::where('medico_crm_id', $especializacao->medico_crm_id)->count() >= 2) {
-            return Response::json(['message' => 'Cara DRM pode ter no máximo 2 especializações.'], 422);
+            return Response::json(['message' => 'Cada CRM pode ter no máximo 2 especializações.'], 422);
         }
 
         DB::beginTransaction();

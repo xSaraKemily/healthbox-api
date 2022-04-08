@@ -16,6 +16,14 @@ class Tratamento extends Model
         'descricao'
     ];
 
+    public function rules()
+    {
+        return [
+            'opiniao_id'        => 'required_without:acompanhamento_id|exists:opinioes',
+            'acompanhamento_id' => 'required_without:opiniao_id|exists:acompanhamentos',
+            'descricao'         => 'required'
+        ];
+    }
 
     public function opiniao()
     {

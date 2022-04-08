@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Opiniao;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -15,7 +16,7 @@ class OpiniaoRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,13 +26,7 @@ class OpiniaoRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'descricao'     => 'required',
-            'paciente_id'   => 'required|exists:users',
-            'tratamento_id' => 'nullable|exists:tratamentos',
-            'eficaz'        => 'required|in:0,1',
-            'ativo'         => 'required|in:0,1'
-        ];
+        return (new Opiniao())->rules();
     }
 
     public function wantsJson()
