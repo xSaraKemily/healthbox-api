@@ -39,7 +39,7 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::delete('usuarios/{id}', [UserController::class, 'destroy']);
 
     Route::post('likes', [LikeController::class, 'store']);
-    Route::delete('likes',  [LikeController::class, 'destroy']);
+    Route::delete('likes/{id}',  [LikeController::class, 'destroy']);
 
     Route::post('crms', [MedicoCrmController::class, 'store']);
     Route::put('crms/{id}', [MedicoCrmController::class, 'update']);
