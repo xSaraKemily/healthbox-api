@@ -59,4 +59,9 @@ class Tratamento extends Model
     {
         return $this->hasOne(Acompanhamento::class, 'id', 'acompanhamento_id');
     }
+
+    public function remedios()
+    {
+        return $this->hasMany(RemedioTratamento::class, 'tratamento_id', 'id');
+    }
 }

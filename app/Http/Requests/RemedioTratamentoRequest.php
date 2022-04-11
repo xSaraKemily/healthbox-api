@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\RemedioTratamento;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -25,15 +26,7 @@ class RemedioTratamentoRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'dose'           => 'decimal',
-            'unidade_medida' => 'max:255',
-            'duracao'        => 'numeric',
-            'intervalo'      => 'numeric',
-            'periodicidade'  => 'required|in:horas,dias',
-            'remedio_id'     => 'required|exists:remedios',
-            'tratamento_id'  => 'required|exists:tratamentos',
-        ];
+       return (new RemedioTratamento())->rules();
     }
 
     public function wantsJson()

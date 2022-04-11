@@ -25,7 +25,6 @@ use Illuminate\Support\Facades\Validator;
 
 class TratamentoController extends Controller
 {
-    //todo: criar campo titulo, tirar required da descricao
     public function store(TratamentoRequest $request) : JsonResponse
     {
         $tratamento = new Tratamento($request->all());
@@ -40,6 +39,22 @@ class TratamentoController extends Controller
 
         try {
             $tratamento->save();
+
+            if($request->filled('remedios')) {
+                foreach ($request->remedios as $remedio) {
+                    $newRemedio = new RemedioTratamento($remedio);
+                    $newRemedio->tratamento_id = $tratamento->id;
+
+                    $validator = Validator::make($newRemedio->getAttributes(), $newRemedio->rules());
+
+                    if($validator->fails()) {
+                        DB::rollBack();
+                        return Response::json(['message' => $validator->errors()->all()], 422);
+                    }
+
+                    $newRemedio->save();
+                }
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erro ao salvar tratamento '. $e);
@@ -49,15 +64,22 @@ class TratamentoController extends Controller
 
         DB::commit();
 
+        $tratamento->makeHidden('opiniao');
+        $tratamento->remedios;
+
         return Response::json([
             'message'    => 'Tratamento salvo com sucesso',
-            'tratamento' => $tratamento->makeHidden('opiniao'),
+            'tratamento' => $tratamento,
         ]);
     }
 
     public function update(Request $request, $id) : JsonResponse
     {
         $tratamento = Tratamento::find($id);
+
+        if(!$tratamento) {
+            return Response::json(['message' => 'Tratamento não encontrado'], 404);
+        }
 
         DB::beginTransaction();
 
@@ -71,6 +93,32 @@ class TratamentoController extends Controller
             }
 
             $tratamento->save();
+
+            if($request->filled('remedios')) {
+                foreach ($request->remedios as $remedio) {
+                    if(isset($remedio['id'])) {
+                        $newRemedio = RemedioTratamento::find($remedio['id']);
+
+                        if(!$newRemedio) {
+                            return Response::json(['message' => 'Vínculo com medicamento não encontrado.'], 404);
+                        }
+
+                        $newRemedio->fill($remedio);
+                    } else {
+                        $newRemedio = new RemedioTratamento($remedio);
+                        $newRemedio->tratamento_id = $tratamento->id;
+                    }
+
+                    $validator = Validator::make($newRemedio->getAttributes(), $newRemedio->rules());
+
+                    if($validator->fails()) {
+                        DB::rollBack();
+                        return Response::json(['message' => $validator->errors()->all()], 422);
+                    }
+
+                    $newRemedio->save();
+                }
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erro ao atualizar tratamento '. $e);
@@ -89,6 +137,10 @@ class TratamentoController extends Controller
     {
         try {
             $tratamento = Tratamento::find($id);
+
+            if(!$tratamento) {
+                return Response::json(['message' => 'Tratamento não encontrado.'], 404);
+            }
 
             RemedioTratamento::where('tratamento_id', $tratamento->id)->delete();
 
