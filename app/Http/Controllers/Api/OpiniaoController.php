@@ -30,7 +30,7 @@ class OpiniaoController extends Controller
        $opinioes =  Opiniao::select("opinioes.*", DB::raw("COUNT(likes.id) as total_like"), DB::raw("COUNT(dislike.id) as total_dislike"))
            ->leftJoin('likes', function ($query) {
                $query->on('likes.opiniao_id', 'opinioes.id')
-                   ->where('is_like', true);
+                   ->where('likes.is_like', true);
            })
            ->leftJoin('likes as dislike', function ($query) {
                $query->on('dislike.opiniao_id', 'opinioes.id')
