@@ -25,9 +25,16 @@ use Illuminate\Support\Facades\Validator;
 
 class TratamentoController extends Controller
 {
+    //todo: criar campo titulo, tirar required da descricao
     public function store(TratamentoRequest $request) : JsonResponse
     {
         $tratamento = new Tratamento($request->all());
+
+        $donoTratamento = $tratamento->opiniao ? $tratamento->opiniao->paciente_id : $tratamento->acompanhamento->medico_id;
+
+        if($donoTratamento != auth()->user()->id) {
+            return Response::json(['message' => 'Erro ao salvar tratamento.'], 500);
+        }
 
         DB::beginTransaction();
 
@@ -44,7 +51,7 @@ class TratamentoController extends Controller
 
         return Response::json([
             'message'    => 'Tratamento salvo com sucesso',
-            'tratamento' => $tratamento,
+            'tratamento' => $tratamento->makeHidden('opiniao'),
         ]);
     }
 
@@ -63,6 +70,7 @@ class TratamentoController extends Controller
                 return Response::json(['message' => $validator->errors()->all()], 422);
             }
 
+            $tratamento->save();
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erro ao atualizar tratamento '. $e);

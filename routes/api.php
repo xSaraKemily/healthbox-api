@@ -56,6 +56,6 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::delete('opinioes/{id}', [OpiniaoController::class, 'destroy']);
 
     Route::post('tratamentos', [TratamentoController::class, 'store']);
-    Route::put('tratamentos', [TratamentoController::class, 'update']);
-    Route::delete('tratamentos', [TratamentoController::class, 'destroy']);
+    Route::put('tratamentos/{id}', [TratamentoController::class, 'update']);
+    Route::delete('tratamentos/{id}', [TratamentoController::class, 'destroy']);
 });
