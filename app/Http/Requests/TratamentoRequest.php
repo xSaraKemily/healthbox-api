@@ -46,7 +46,8 @@ class TratamentoRequest extends FormRequest
                         ->whereNull('deleted_at');
                 })
             ],
-            'descricao' => 'required'
+            'descricao' => 'nullable',
+            'titulo'    => 'required|max:50'
         ];
     }
 

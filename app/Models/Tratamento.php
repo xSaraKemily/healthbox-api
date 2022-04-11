@@ -16,6 +16,7 @@ class Tratamento extends Model
     protected $fillable = [
         'opiniao_id',
         'acompanhamento_id',
+        'titulo',
         'descricao'
     ];
 
@@ -39,7 +40,8 @@ class Tratamento extends Model
                      ->whereNull('deleted_at')
                      ->ignore($this->id)
             ],
-            'descricao' => 'required'
+            'descricao' => 'nullable',
+            'titulo'    => 'required|max:50'
         ];
     }
 
