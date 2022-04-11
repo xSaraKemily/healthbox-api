@@ -76,11 +76,11 @@ class OpiniaoController extends Controller
        //todo: filtro de remedio
 
        return $opinioes->groupBy(
-           'id',
-           'descricao',
-           'paciente_id',
-           'eficaz',
-           'ativo',
+           'opinioes.id',
+           'opinioes.descricao',
+           'opinioes.paciente_id',
+           'opinioes.eficaz',
+           'opinioes.ativo',
            'opinioes.created_at',
            'opinioes.updated_at',
            'opinioes.deleted_at'
