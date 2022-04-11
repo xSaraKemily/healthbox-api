@@ -38,6 +38,11 @@ class Opiniao extends Model
 
     public function tratamento()
     {
-        return $this->belongsTo(Tratamento::class, 'id', 'tratamento_id');
+        return $this->hasOne(Tratamento::class, 'opiniao_id', 'id');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'opiniao_id', 'id');
     }
 }

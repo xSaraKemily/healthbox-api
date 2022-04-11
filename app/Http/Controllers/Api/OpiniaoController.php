@@ -35,7 +35,10 @@ class OpiniaoController extends Controller
            ->leftJoin('likes as dislike', function ($query) {
                $query->on('dislike.opiniao_id', 'opinioes.id')
                    ->where('dislike.is_like', false);
-           });
+           })
+       ->with(['tratamento' => function($query) {
+           $query->with('remedios');
+       }]);
 
        if($request->filled('ativo')) {
            $opinioes = $opinioes->where('ativo', $request->ativo);
