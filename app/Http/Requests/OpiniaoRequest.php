@@ -16,6 +16,10 @@ class OpiniaoRequest extends FormRequest
      */
     public function authorize()
     {
+        if(auth()->user()->tipo == 'M') {
+            return false;
+        }
+
         return true;
     }
 

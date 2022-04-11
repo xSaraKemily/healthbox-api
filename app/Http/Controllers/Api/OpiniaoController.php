@@ -15,6 +15,7 @@ use App\Models\MedicoCrmEspecializacao;
 use App\Models\Opiniao;
 use App\Models\RemedioTratamento;
 use App\Models\Tratamento;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,15 @@ class OpiniaoController extends Controller
 {
    public function index(Request $request)
    {
-       $opinioes =  Opiniao::select("opinioes.*", DB::raw("COUNT(likes.id) as total_like"))->leftJoin('likes', 'likes.opiniao_id', 'opinioes.id');
+       $opinioes =  Opiniao::select("opinioes.*", DB::raw("COUNT(likes.id) as total_like"), DB::raw("COUNT(dislike.id) as total_dislike"))
+           ->leftJoin('likes', function ($query) {
+               $query->on('likes.opiniao_id', 'opinioes.id')
+                   ->where('is_like', true);
+           })
+           ->leftJoin('likes as dislike', function ($query) {
+               $query->on('dislike.opiniao_id', 'opinioes.id')
+                   ->where('dislike.is_like', false);
+           });
 
        if($request->filled('ativo')) {
            $opinioes = $opinioes->where('ativo', $request->ativo);
@@ -36,14 +45,46 @@ class OpiniaoController extends Controller
            $opinioes = $opinioes->where('paciente_id', $request->paciente_id);
        }
 
-       if($request->filled('order_eficaz') && in_array($request->order_eficaz, ['desc', 'asc'])) {
-           $opinioes = $opinioes->orderBy('paciente_id', $request->order_eficaz);
-
-       } else if($request->filled('order_likes') && in_array($request->order_likes, ['desc', 'asc'])) {
-           $opinioes = $opinioes->orderBy('total_like', $request->order_eficaz);
+       if($request->filled('eficaz')) {
+           $opinioes = $opinioes->where('eficaz', $request->eficaz);
        }
 
-       return $opinioes->groupBy('opinioes.id', 'likes.id')->paginate(10);
+       if($request->filled('order_likes') && in_array($request->order_likes, ['desc', 'asc'])) {
+           //nao funcionou colocando direto o request
+
+           if($request->order_likes == 'desc') {
+               $opinioes = $opinioes->orderBy('total_like', 'desc');
+           }
+
+           if($request->order_likes == 'asc') {
+               $opinioes = $opinioes->orderBy('total_like', 'asc');
+           }
+       }
+
+       if($request->filled('order_dislikes') && in_array($request->order_dislikes, ['desc', 'asc'])) {
+           //nao funcionou colocando direto o request
+
+           if($request->order_dislikes == 'desc') {
+               $opinioes = $opinioes->orderBy('total_dislike', 'desc');
+           }
+
+           if($request->order_dislikes == 'asc') {
+               $opinioes = $opinioes->orderBy('total_dislike', 'asc');
+           }
+       }
+
+       //todo: filtro de remedio
+
+       return $opinioes->groupBy(
+           'id',
+           'descricao',
+           'paciente_id',
+           'eficaz',
+           'ativo',
+           'opinioes.created_at',
+           'opinioes.updated_at',
+           'opinioes.deleted_at'
+       )->paginate(10);
    }
 
     public function store(OpiniaoRequest $request) : JsonResponse
@@ -73,13 +114,17 @@ class OpiniaoController extends Controller
     {
         $opiniao = Opiniao::find($id);
 
+        if(!$opiniao) {
+            return Response::json(['message' => 'Opinião não encontrada.'], 404);
+        }
+
+        if($opiniao->paciente->tipo == 'M') {
+            return Response::json(['message' => 'Opiniões só podem ser atualizadas por pacientes.'], 500);
+        }
+
         DB::beginTransaction();
 
         try {
-           if($request->filled('paciente_id')) {
-
-           }
-
             $opiniao->fill($request->all());
 
             $validator = Validator::make($opiniao->getAttributes(), $opiniao->rules());
@@ -88,6 +133,7 @@ class OpiniaoController extends Controller
                 return Response::json(['message' => $validator->errors()->all()], 422);
             }
 
+            $opiniao->save();
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erro ao atualizar opinião '. $e);
@@ -109,9 +155,11 @@ class OpiniaoController extends Controller
 
             $tratamento = Tratamento::where('opiniao_id', $opiniao->id)->first();
 
-            RemedioTratamento::where('tratamento_id', $tratamento->id)->delete();
+            if($tratamento) {
+                RemedioTratamento::where('tratamento_id', $tratamento->id)->delete();
 
-            $tratamento->delete();
+                $tratamento->delete();
+            }
 
             $opiniao->delete();
         } catch (\Exception $e) {

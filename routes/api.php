@@ -52,8 +52,8 @@ Route::group(['middleware' => 'auth:api',], function () {
 
     Route::get('opinioes', [OpiniaoController::class, 'index']);
     Route::post('opinioes', [OpiniaoController::class, 'store']);
-    Route::put('opinioes', [OpiniaoController::class, 'update']);
-    Route::delete('opinioes', [OpiniaoController::class, 'destroy']);
+    Route::put('opinioes/{id}', [OpiniaoController::class, 'update']);
+    Route::delete('opinioes/{id}', [OpiniaoController::class, 'destroy']);
 
     Route::post('tratamentos', [TratamentoController::class, 'store']);
     Route::put('tratamentos', [TratamentoController::class, 'update']);

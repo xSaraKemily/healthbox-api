@@ -19,6 +19,8 @@ class Opiniao extends Model
         'ativo'
     ];
 
+    protected $attributes = ['ativo' => 1];
+
     public function rules()
     {
         return [
@@ -31,11 +33,11 @@ class Opiniao extends Model
 
     public function paciente()
     {
-        $this->hasOne(User::class, 'id', 'paciente_id');
+        return $this->hasOne(User::class, 'id', 'paciente_id');
     }
 
     public function tratamento()
     {
-        $this->belongsTo(Tratamento::class, 'id', 'tratamento_id');
+        return $this->belongsTo(Tratamento::class, 'id', 'tratamento_id');
     }
 }
