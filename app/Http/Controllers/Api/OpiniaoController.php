@@ -32,7 +32,7 @@ class OpiniaoController extends Controller
               "opinioes.*",
               DB::raw("COUNT(likes.id) as total_like"),
               DB::raw("COUNT(dislike.id) as total_dislike"),
-              DB::raw("(CASE WHEN COUNT(likeUsu.id) > 0 THEN true ELSE false END) as usuario_like"),
+//              DB::raw("(CASE WHEN COUNT(likeUsu.id) > 0 THEN true ELSE false END) as usuario_like"),
               DB::raw("(CASE WHEN COUNT(dislikeUsu.id) > 0 THEN true ELSE false END) as usuario_dislike")
           ]
        )
