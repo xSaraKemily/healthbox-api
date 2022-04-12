@@ -27,13 +27,7 @@ class OpiniaoController extends Controller
 {
    public function index(Request $request)
    {
-       $opinioes =  Opiniao::select(
-          [
-              "opinioes.*",
-              DB::raw("COUNT(likes.id) as total_like"),
-              DB::raw("COUNT(dislike.id) as total_dislike")
-          ]
-       )
+       $opinioes =  Opiniao::select("opinioes.*", DB::raw("COUNT(likes.id) as total_like"), DB::raw("COUNT(dislike.id) as total_dislike"))
            ->leftJoin('likes', function ($query) {
                $query->on('likes.opiniao_id', 'opinioes.id')
                    ->where('likes.is_like', true);
@@ -46,7 +40,8 @@ class OpiniaoController extends Controller
            $query->with(['remedios' => function($sub) {
                $sub->with('remedio');
            }]);
-       }]);
+       }])
+       ->with('likes');
 
        if($request->filled('ativo')) {
            $opinioes = $opinioes->where('ativo', $request->ativo);
@@ -85,7 +80,7 @@ class OpiniaoController extends Controller
        }
 
        //todo: filtro de remedio
-       $opinioes = $opinioes->groupBy(
+        return $opinioes->groupBy(
            'opinioes.id',
            'opinioes.descricao',
            'opinioes.paciente_id',
@@ -96,19 +91,6 @@ class OpiniaoController extends Controller
            'opinioes.deleted_at',
            'likes.usuario_id'
        )->paginate(10);
-
-       dd($opinioes->get);
-
-       foreach ($opinioes->data as $opiniao) {
-           $likeUsu = Like::where('usuario_id', auth()->user()->id)->where('opiniao_id', $opiniao->id)->first();
-
-           if($likeUsu) {
-               $opiniao->usuario_like =  $likeUsu->is_like ? true : false;
-               $opiniao->usuario_dislike = !$likeUsu->is_like ? true : false;
-           }
-       }
-
-       return $opinioes;
    }
 
     public function store(OpiniaoRequest $request) : JsonResponse
