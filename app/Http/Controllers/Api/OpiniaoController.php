@@ -27,7 +27,13 @@ class OpiniaoController extends Controller
 {
    public function index(Request $request)
    {
-       $opinioes =  Opiniao::select("opinioes.*", DB::raw("COUNT(likes.id) as total_like"), DB::raw("COUNT(dislike.id) as total_dislike"))
+       $opinioes =  Opiniao::select(
+           "opinioes.*",
+           DB::raw("COUNT(likes.id) as total_like"),
+           DB::raw("COUNT(dislike.id) as total_dislike"),
+           DB::raw("(CASE WHEN COUNT(likeUsu.id) > 0 THEN true ELSE false END) as usuario_like"),
+           DB::raw("(CASE WHEN COUNT(dislikeUsu.id) > 0 THEN true ELSE false END) as usuario_dislike")
+       )
            ->leftJoin('likes', function ($query) {
                $query->on('likes.opiniao_id', 'opinioes.id')
                    ->where('likes.is_like', true);
@@ -35,6 +41,15 @@ class OpiniaoController extends Controller
            ->leftJoin('likes as dislike', function ($query) {
                $query->on('dislike.opiniao_id', 'opinioes.id')
                    ->where('dislike.is_like', false);
+           })
+           ->leftJoin('likes as likeUsu', function ($query) {
+               $query->on('likeUsu.opiniao_id', 'opinioes.id')
+                   ->where('likeUsu.is_like', true)
+               ->where('likeUsu.usuario_id', auth()->user()->id);
+           })
+           ->leftJoin('likes as dislikeUsu', function ($query) {
+               $query->on('dislikeUsu.opiniao_id', 'opinioes.id')
+                   ->where('dislikeUsu.is_like', false);
            })
        ->with(['tratamento' => function($query) {
            $query->with('remedios');
