@@ -28,11 +28,13 @@ class OpiniaoController extends Controller
    public function index(Request $request)
    {
        $opinioes =  Opiniao::select(
-           "opinioes.*",
-           DB::raw("COUNT(likes.id) as total_like"),
-           DB::raw("COUNT(dislike.id) as total_dislike"),
-           DB::raw("(CASE WHEN COUNT(likeUsu.id) > 0 THEN true ELSE false END) as usuario_like"),
-           DB::raw("(CASE WHEN COUNT(dislikeUsu.id) > 0 THEN true ELSE false END) as usuario_dislike")
+          [
+              "opinioes.*",
+              DB::raw("COUNT(likes.id) as total_like"),
+              DB::raw("COUNT(dislike.id) as total_dislike"),
+              DB::raw("(CASE WHEN COUNT(likeUsu.id) > 0 THEN true ELSE false END) as usuario_like"),
+              DB::raw("(CASE WHEN COUNT(dislikeUsu.id) > 0 THEN true ELSE false END) as usuario_dislike")
+          ]
        )
            ->leftJoin('likes', function ($query) {
                $query->on('likes.opiniao_id', 'opinioes.id')
@@ -44,12 +46,17 @@ class OpiniaoController extends Controller
            })
            ->leftJoin('likes as likeUsu', function ($query) {
                $query->on('likeUsu.opiniao_id', 'opinioes.id')
-                   ->where('likeUsu.is_like', true)
-               ->where('likeUsu.usuario_id', auth()->user()->id);
+                   ->where(function ($subQuery) {
+                      $subQuery->where('likeUsu.is_like', true)
+                          ->where('likeUsu.usuario_id', auth()->user()->id);
+                   });
            })
            ->leftJoin('likes as dislikeUsu', function ($query) {
                $query->on('dislikeUsu.opiniao_id', 'opinioes.id')
-                   ->where('dislikeUsu.is_like', false);
+                   ->where(function ($subQuery) {
+                       $subQuery->where('dislikeUsu.is_like', true)
+                           ->where('dislikeUsu.usuario_id', auth()->user()->id);
+                   });
            })
        ->with(['tratamento' => function($query) {
            $query->with('remedios');
