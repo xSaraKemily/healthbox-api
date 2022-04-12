@@ -27,8 +27,6 @@ class OpiniaoController extends Controller
 {
    public function index(Request $request)
    {
-       $usuario = auth()->user()->id;
-
        $opinioes =  Opiniao::select(
           [
               "opinioes.*",
@@ -97,18 +95,20 @@ class OpiniaoController extends Controller
            'opinioes.updated_at',
            'opinioes.deleted_at',
            'likes.usuario_id'
-       )->get();
+       )->paginate(10);
 
-       foreach ($opinioes as $opiniao) {
+       dd($opinioes->get);
+
+       foreach ($opinioes->data as $opiniao) {
            $likeUsu = Like::where('usuario_id', auth()->user()->id)->where('opiniao_id', $opiniao->id)->first();
 
            if($likeUsu) {
-               $opiniao->setAttribute('usuario_like', $likeUsu->is_like ? true : false);
-               $opiniao->setAttribute('usuario_dislike', !$likeUsu->is_like ? true : false);
+               $opiniao->usuario_like =  $likeUsu->is_like ? true : false;
+               $opiniao->usuario_dislike = !$likeUsu->is_like ? true : false;
            }
        }
 
-       return $opinioes->paginate(10);
+       return $opinioes;
    }
 
     public function store(OpiniaoRequest $request) : JsonResponse
