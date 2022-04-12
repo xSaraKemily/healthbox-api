@@ -55,6 +55,6 @@ class RemedioController extends Controller
            return $remedios;
        }
 
-        return Remedio::where('nome', 'like', '%'.$request->nome.'%')->paginate(10);
+        return Remedio::where('nome', 'like', '%'.$request->nome.'%')->groupBy('fabricante')->paginate(10);
     }
 }
