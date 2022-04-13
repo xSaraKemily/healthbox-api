@@ -39,6 +39,10 @@ class RemedioController extends Controller
 
            $remedios = json_decode($response->body());
 
+           if(!isset($remedios->content)) {
+               return $remedios;
+           }
+
            foreach ($remedios->content as $remedio) {
                if(Remedio::where('api_id', $remedio->idProduto)->first()) {
                    continue;
@@ -55,6 +59,6 @@ class RemedioController extends Controller
            return $remedios;
        }
 
-        return Remedio::where('nome', 'like', '%'.$request->nome.'%')->groupBy('fabricante')->paginate(10);
+        return Remedio::where('nome', 'like', '%'.$request->nome.'%')->paginate(10);
     }
 }
