@@ -42,7 +42,7 @@ class OpiniaoController extends Controller
            }]);
        }])
        ->with(['likes' => function($query) {
-           $query->select('usuario_id', 'opiniao_id', 'is_like');
+           $query->select('usuario_id', 'opiniao_id', 'is_like', 'id');
        }]);
 
        if($request->filled('ativo')) {
