@@ -20,11 +20,11 @@ class QuestaoQuestionarioResposta extends Model
 
     public function opcao()
     {
-        $this->hasOne(OpcaoQuestao::class, 'id', 'opcao_id');
+        return $this->hasOne(OpcaoQuestao::class, 'id', 'opcao_id');
     }
 
     public function questionarioQuestao()
     {
-        $this->hasOne(QuestaoQuestionario::class, 'id', 'questionario_questao_id');
+        return $this->hasOne(QuestaoQuestionario::class, 'id', 'questionario_questao_id');
     }
 }

@@ -19,11 +19,16 @@ class QuestaoQuestionario extends Model
 
     public function questionario()
     {
-        $this->hasOne(Questionario::class, 'id', 'questionario_id');
+        return $this->hasOne(Questionario::class, 'id', 'questionario_id');
     }
 
     public function questao()
     {
-        $this->hasOne(Questao::class, 'id', 'questao_id');
+        return $this->hasOne(Questao::class, 'id', 'questao_id');
+    }
+
+    public function resposta()
+    {
+        return $this->hasOne(QuestaoQuestionarioResposta::class, 'questionario_questao_id', 'id');
     }
 }

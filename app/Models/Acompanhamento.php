@@ -23,7 +23,29 @@ class Acompanhamento extends Model
         'ativo'                    => 'required|in:0,1'
     ];
 
+    protected $attributes = ['ativo' => 1];
+
     protected $casts = [
         'data_inicio' => 'date',
     ];
+
+    public function tratamento()
+    {
+        return $this->hasOne(Tratamento::class, 'acompanhamento_id', 'id');
+    }
+
+    public function questionario()
+    {
+        return $this->hasOne(Questionario::class, 'questionario_id', 'id');
+    }
+
+    public function medico()
+    {
+        return $this->hasOne(User::class, 'id', 'medico_id');
+    }
+
+    public function paciente()
+    {
+        return $this->hasOne(User::class, 'id', 'paciente_id');
+    }
 }

@@ -15,7 +15,11 @@ class AcompanhamentoRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        if(auth()->user()->tipo == 'P') {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -26,14 +30,14 @@ class AcompanhamentoRequest extends FormRequest
     public function rules()
     {
         return [
-            'descricao_paciente' => 'nullable',
-            'quantidade_periodicidade',
-            'dias_duracao',
-            'data_inicio',
-            'medico_id',
-            'paciente_id',
-            'questionario_id',
-            'ativo'
+            'descricao_paciente'       => 'nullable',
+            'quantidade_periodicidade' => 'required|numeric',
+            'dias_duracao'             => 'required|numeric',
+            'data_inicio'              => 'nullable|date',
+            'medico_id'                => 'required|exists:users,id',
+            'paciente_id'              => 'required|exists:users,id',
+            'questionario_id'          => 'nullable|exists:questionarios,id',
+            'ativo'                    => 'in:1,0|default:1'
         ];
     }
 

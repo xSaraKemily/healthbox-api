@@ -16,4 +16,9 @@ class Questionario extends Model
         'titulo',
         'descricao',
     ];
+
+    public function questoes()
+    {
+        return $this->hasMany(QuestaoQuestionario::class, 'questionario_id', 'id');
+    }
 }
