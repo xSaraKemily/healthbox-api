@@ -43,7 +43,8 @@ class OpiniaoController extends Controller
        }])
        ->with(['likes' => function($query) {
            $query->select('usuario_id', 'opiniao_id', 'is_like', 'id');
-       }]);
+       }])
+       ->with('paciente');
 
        if($request->filled('ativo')) {
            $opinioes = $opinioes->where('ativo', $request->ativo);
