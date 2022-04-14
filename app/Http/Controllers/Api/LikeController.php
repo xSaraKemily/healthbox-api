@@ -22,6 +22,17 @@ use Illuminate\Support\Facades\Validator;
 
 class LikeController extends Controller
 {
+    public function index(Request $request)
+    {
+        $likes = Like::select('*');
+
+         if($request->filled('opiniao_id')) {
+             $likes = $likes->where('opiniao_id', $request->opiniao_id);
+         }
+
+        return $likes->paginate(10);
+    }
+
     public function store(Request $request) : JsonResponse
     {
         $like = Like::where('usuario_id', auth()->user()->id)->where('opiniao_id', $request->opiniao_id)->withTrashed()->first();
@@ -57,7 +68,10 @@ class LikeController extends Controller
 
         DB::commit();
 
-        return Response::json(['message' => 'Like salvo com sucesso.',]);
+        return Response::json([
+            'message' => 'Like salvo com sucesso.',
+            'like' => $like
+            ]);
     }
 
     public function destroy($id)

@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::put('usuarios/{id}', [UserController::class, 'update']);
     Route::delete('usuarios/{id}', [UserController::class, 'destroy']);
 
+    Route::get('likes', [LikeController::class, 'index']);
     Route::post('likes', [LikeController::class, 'store']);
     Route::delete('likes/{id}',  [LikeController::class, 'destroy']);
 
