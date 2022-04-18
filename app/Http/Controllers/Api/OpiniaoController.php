@@ -110,10 +110,7 @@ class OpiniaoController extends Controller
            }
        }
 
-       //todo: filtro de remedio
-        return $opinioes->groupBy(
-           'opinioes.id'
-       )->paginate(10);
+        return $opinioes->groupBy('opinioes.id')->paginate(10);
    }
 
     public function store(OpiniaoRequest $request) : JsonResponse
