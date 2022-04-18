@@ -56,6 +56,8 @@ class OpiniaoController extends Controller
                        $remedios = explode(',', $request->remedios);
                    }
 
+                  Log::debug('remedios ', $remedios);
+
                    $query->join('remedios_tratamentos as ret', 'ret.tratamento_id', 'tt.id')
                         ->whereIn('ret.remedio_id', $remedios);
                }
