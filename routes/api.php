@@ -9,6 +9,7 @@ use \App\Http\Controllers\Api\EspecializacaoController;
 use \App\Http\Controllers\Api\RemedioController;
 use \App\Http\Controllers\Api\OpiniaoController;
 use \App\Http\Controllers\Api\TratamentoController;
+use \App\Http\Controllers\Api\GraficoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,4 +60,6 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::post('tratamentos', [TratamentoController::class, 'store']);
     Route::put('tratamentos/{id}', [TratamentoController::class, 'update']);
     Route::delete('tratamentos/{id}', [TratamentoController::class, 'destroy']);
+
+    Route::get('graficos/paciente-remedio', [GraficoController::class, 'pacienteRemedio']);
 });

@@ -52,7 +52,7 @@ class RemedioTratamento extends Model
 
     public function remedio()
     {
-        return $this->hasOne(Remedio::class, 'id', 'remedio_id');
+        return $this->hasOne(Remedio::class, 'id', 'remedios_tratamentos');
     }
 
     public function tratamento()
