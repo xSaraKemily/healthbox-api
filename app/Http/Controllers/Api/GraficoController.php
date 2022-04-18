@@ -2,21 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Actions\ValidaEstadoAction;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\AcompanhamentoRequest;
-use App\Http\Requests\EspecializacaoRequest;
-use App\Http\Requests\MedicoCrmEspecializacaoRequest;
-use App\Http\Requests\MedicoCrmRequest;
-use App\Models\Acompanhamento;
-use App\Models\Especializacao;
-use App\Models\MedicoCrm;
-use App\Models\MedicoCrmEspecializacao;
 use App\Models\RemedioTratamento;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 
 class GraficoController extends Controller
