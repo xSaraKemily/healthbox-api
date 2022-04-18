@@ -46,7 +46,7 @@ class OpiniaoController extends Controller
        }])
        ->with('paciente');
 
-       Log::debug($request->filled('remedios'));
+       dump($request->filled('remedios'));
        if($request->filled('remedios') || $request->filled('titulo')) {
            $opinioes = $opinioes->join('tratamentos as tt', function($query) use($request){
                $query->on('tt.opiniao_id', 'opinioes.id');
@@ -57,7 +57,7 @@ class OpiniaoController extends Controller
                        $remedios = explode(',', $request->remedios);
                    }
 
-                  Log::debug('remedios ', $remedios);
+                  dd('remedios ', $remedios);
 
                    $query->join('remedios_tratamentos as ret', 'ret.tratamento_id', 'tt.id')
                         ->whereIn('ret.remedio_id', $remedios);
