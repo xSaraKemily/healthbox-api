@@ -46,6 +46,7 @@ class OpiniaoController extends Controller
        }])
        ->with('paciente');
 
+       Log::debug($request->filled('remedios'));
        if($request->filled('remedios') || $request->filled('titulo')) {
            $opinioes = $opinioes->join('tratamentos as tt', function($query) use($request){
                $query->on('tt.opiniao_id', 'opinioes.id');
