@@ -50,11 +50,6 @@ class Tratamento extends Model
         return $this->hasOne(Opiniao::class, 'id', 'opiniao_id');
     }
 
-    public function tratamento()
-    {
-        return $this->hasOne(Tratamento::class, 'id', 'tratamento_id');
-    }
-
     public function acompanhamento()
     {
         return $this->hasOne(Acompanhamento::class, 'id', 'acompanhamento_id');

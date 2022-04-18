@@ -36,7 +36,7 @@ class OpiniaoController extends Controller
                $query->on('dislike.opiniao_id', 'opinioes.id')
                    ->where('dislike.is_like', false);
            })
-       ->with(['tratamento' => function($query) {
+       ->with(['tratamento' => function($query){
            $query->with(['remedios' => function($sub) {
                $sub->with('remedio');
            }]);
@@ -45,6 +45,26 @@ class OpiniaoController extends Controller
            $query->select('usuario_id', 'opiniao_id', 'is_like', 'id');
        }])
        ->with('paciente');
+
+       if($request->filled('remedios') || $request->filled('titulo')) {
+           $opinioes = $opinioes->join('tratamentos as tt', function($query) use($request){
+               $query->on('tt.opiniao_id', 'opinioes.id');
+
+               if($request->remedios) {
+                   $remedios = $request->remedios;
+                   if(!is_array($remedios)) {
+                       $remedios = explode(',', $request->remedios);
+                   }
+
+                   $query->join('remedios_tratamentos as ret', 'ret.tratamento_id', 'tt.id')
+                        ->whereIn('remedio_id', $remedios);
+               }
+
+               if($request->titulo) {
+                   $query->where('tt.titulo', 'like', $request->titulo);
+               }
+            });
+       }
 
        if($request->filled('ativo')) {
            $opinioes = $opinioes->where('ativo', $request->ativo);
@@ -71,8 +91,6 @@ class OpiniaoController extends Controller
        }
 
        if($request->filled('order_dislikes') && in_array($request->order_dislikes, ['desc', 'asc'])) {
-           //nao funcionou colocando direto o request
-
            if($request->order_dislikes == 'desc') {
                $opinioes = $opinioes->orderBy('total_dislike', 'desc');
            }
@@ -82,17 +100,19 @@ class OpiniaoController extends Controller
            }
        }
 
+       if($request->filled('order_data') && in_array($request->order_data, ['desc', 'asc'])) {
+           if($request->order_data == 'desc') {
+               $opinioes = $opinioes->orderBy('created_at', 'desc');
+           }
+
+           if($request->order_data == 'asc') {
+               $opinioes = $opinioes->orderBy('created_at', 'asc');
+           }
+       }
+
        //todo: filtro de remedio
         return $opinioes->groupBy(
-           'opinioes.id',
-           'opinioes.descricao',
-           'opinioes.paciente_id',
-           'opinioes.eficaz',
-           'opinioes.ativo',
-           'opinioes.created_at',
-           'opinioes.updated_at',
-           'opinioes.deleted_at',
-           'likes.usuario_id'
+           'opinioes.id'
        )->paginate(10);
    }
 
