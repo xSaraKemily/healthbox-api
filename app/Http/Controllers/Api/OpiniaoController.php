@@ -57,7 +57,7 @@ class OpiniaoController extends Controller
                    }
 
                    $query->join('remedios_tratamentos as ret', 'ret.tratamento_id', 'tt.id')
-                        ->whereIn('ret.remedio_id', $remedios);
+                        ->whereIn('remedio_id', $remedios);
                }
 
                if($request->titulo) {
