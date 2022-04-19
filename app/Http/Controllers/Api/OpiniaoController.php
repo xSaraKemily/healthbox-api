@@ -31,12 +31,12 @@ class OpiniaoController extends Controller
            ->leftJoin('likes', function ($query) {
                $query->on('likes.opiniao_id', 'opinioes.id')
                    ->where('likes.is_like', true)
-                   ->whereNull('deleted_at');
+                   ->whereNull('likes.deleted_at');
            })
            ->leftJoin('likes as dislike', function ($query) {
                $query->on('dislike.opiniao_id', 'opinioes.id')
                    ->where('dislike.is_like', false)
-                   ->whereNull('deleted_at');
+                   ->whereNull('dislike.deleted_at');
            })
        ->with(['tratamento' => function($query){
            $query->with(['remedios' => function($sub) {
@@ -45,7 +45,7 @@ class OpiniaoController extends Controller
        }])
        ->with(['likes' => function($query) {
            $query->select('usuario_id', 'opiniao_id', 'is_like', 'id')
-           ->whereNull('deleted_at');
+           ->whereNull('likes.deleted_at');
        }])
        ->with('paciente');
 
