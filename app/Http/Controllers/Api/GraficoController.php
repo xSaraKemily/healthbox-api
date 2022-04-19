@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Models\RemedioTratamento;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 
 class GraficoController extends Controller
@@ -14,7 +15,7 @@ class GraficoController extends Controller
      */
    public function pacienteRemedio(Request $request)
    {
-       $query = RemedioTratamento::select('remedios_tratamentos.remedio_id', 'opinioes.paciente_id', 'remedios.nome as remedio')
+       $query = RemedioTratamento::select('remedios_tratamentos.remedio_id', 'opinioes.paciente_id', DB::raw("CONCAT(remedios.nome, ' (', remedios.fabricante, ') ') as remedio"))
            ->join('tratamentos', 'tratamentos.id', 'remedios_tratamentos.tratamento_id')
            ->join('opinioes', 'opinioes.id', 'tratamentos.opiniao_id')
            ->join('remedios', 'remedios.id', 'remedios_tratamentos.remedio_id');
@@ -27,7 +28,7 @@ class GraficoController extends Controller
            $query = $query->whereIn('remedios.id', $remedios);
        }
 
-       $query = $query->groupBy('opinioes.paciente_id', 'remedios_tratamentos.remedio_id', 'remedios.nome')
+       $query = $query->groupBy('opinioes.paciente_id', 'remedios_tratamentos.remedio_id', 'remedios.nome', 'remedios.fabricante')
            ->get();
 
        $remedios = [];
