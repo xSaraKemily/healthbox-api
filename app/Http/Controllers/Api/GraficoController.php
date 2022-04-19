@@ -44,8 +44,10 @@ class GraficoController extends Controller
        }
 
        $data = [];
+       $count = 0;
        foreach ($remedios as $key => $m) {
            $data[] = [
+               'id'    => $count++, //id ficticio para colocar cor no design do app
                'eixoY' => $m['eixoY'],
                'eixoX' => $key
            ];
