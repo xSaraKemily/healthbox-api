@@ -62,4 +62,5 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::delete('tratamentos/{id}', [TratamentoController::class, 'destroy']);
 
     Route::get('graficos/paciente-remedio', [GraficoController::class, 'pacienteRemedio']);
+    Route::get('graficos/remedio-eficacia', [GraficoController::class, 'remedioEficacia']);
 });
