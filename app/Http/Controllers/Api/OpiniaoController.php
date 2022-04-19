@@ -30,11 +30,13 @@ class OpiniaoController extends Controller
        $opinioes =  Opiniao::select("opinioes.*", DB::raw("COUNT(likes.id) as total_like"), DB::raw("COUNT(dislike.id) as total_dislike"))
            ->leftJoin('likes', function ($query) {
                $query->on('likes.opiniao_id', 'opinioes.id')
-                   ->where('likes.is_like', true);
+                   ->where('likes.is_like', true)
+                   ->whereNull('deleted_at');
            })
            ->leftJoin('likes as dislike', function ($query) {
                $query->on('dislike.opiniao_id', 'opinioes.id')
-                   ->where('dislike.is_like', false);
+                   ->where('dislike.is_like', false)
+                   ->whereNull('deleted_at');
            })
        ->with(['tratamento' => function($query){
            $query->with(['remedios' => function($sub) {
@@ -42,7 +44,8 @@ class OpiniaoController extends Controller
            }]);
        }])
        ->with(['likes' => function($query) {
-           $query->select('usuario_id', 'opiniao_id', 'is_like', 'id');
+           $query->select('usuario_id', 'opiniao_id', 'is_like', 'id')
+           ->whereNull('deleted_at');
        }])
        ->with('paciente');
 
