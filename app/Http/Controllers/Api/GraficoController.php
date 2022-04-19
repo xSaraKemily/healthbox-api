@@ -17,7 +17,7 @@ class GraficoController extends Controller
            ->join('tratamentos', 'tratamentos.id', 'remedios_tratamentos.tratamento_id')
            ->join('opinioes', 'opinioes.id', 'tratamentos.opiniao_id')
            ->join('remedios', 'remedios.id', 'remedios_tratamentos.remedio_id')
-           ->groupBy('opinioes.paciente_id', 'remedios_tratamentos.remedio_id')
+           ->groupBy('opinioes.paciente_id', 'remedios_tratamentos.remedio_id', 'remedios.nome')
            ->get();
 
        $remedios = [];
