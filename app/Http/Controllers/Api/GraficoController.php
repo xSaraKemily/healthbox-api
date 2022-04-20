@@ -12,16 +12,20 @@ class GraficoController extends Controller
 {
     /**
      * Pacientes x remédio.
-     * grafico de linha horizontal
+     * grafico de barra horizontal
      */
    public function pacienteRemedio(Request $request)
    {
+       if(!$request->filled('remedios')) {
+           return Response::json([]);
+       }
+
        $query = RemedioTratamento::select('remedios_tratamentos.remedio_id', 'opinioes.paciente_id', DB::raw("CONCAT(remedios.nome, ' (', remedios.fabricante, ') ') as remedio"))
            ->join('tratamentos', 'tratamentos.id', 'remedios_tratamentos.tratamento_id')
            ->join('opinioes', 'opinioes.id', 'tratamentos.opiniao_id')
            ->join('remedios', 'remedios.id', 'remedios_tratamentos.remedio_id');
 
-       if($request->filled('remedios')) {
+       if($request->remedios) {
            $remedios = $request->remedios;
            if(!is_array($remedios)) {
                $remedios = explode(',', $remedios);
@@ -33,6 +37,7 @@ class GraficoController extends Controller
            ->get();
 
        $remedios = [];
+       $totalUso = 0;
        foreach ($query as $dados) {
            if(isset($remedios[$dados->remedio])) {
                $remedios[$dados->remedio]['eixoY']++;
@@ -43,16 +48,30 @@ class GraficoController extends Controller
            } else {
                $remedios[$dados->remedio]['eixoY'] = 1;
            }
+
+           $totalUso += $remedios[$dados->remedio]['eixoY'];
        }
+
+       $calculaPorcentagem = $request->filled('tipoGrafico') && $request->tipoGrafico == 'pie' ? true : false;
 
        $data = [];
        $count = 0;
        foreach ($remedios as $key => $m) {
-           $data[] = [
-               'id'    => $count++, //id ficticio para colocar cor no design do app
-               'eixoY' => $m['eixoY'],
-               'eixoX' => $key
-           ];
+           if($calculaPorcentagem) {
+               //grafico pie
+               $data[] = [
+                   'id'      => $count++, //id ficticio para colocar cor no design do app
+                   'percent' => round(($m['eixoY'] * 100) / $totalUso, 2),
+                   'label'   => $key
+               ];
+           } else {
+               //grafico bar
+               $data[] = [
+                   'id'    => $count++, //id ficticio para colocar cor no design do app
+                   'eixoY' => $m['eixoY'],
+                   'eixoX' => $key
+               ];
+           }
        }
 
        return Response::json($data);
@@ -60,10 +79,14 @@ class GraficoController extends Controller
 
     /**
      * Remédio x eficaz x ineficaz
-     * grafico de linha horizontal dupla
+     * grafico de barra horizontal dupla
      */
     public function remedioEficacia(Request $request)
     {
+        if(!$request->filled('remedios')) {
+            return Response::json([]);
+        }
+
         $query = RemedioTratamento::select('opinioes.eficaz', 'opinioes.paciente_id', DB::raw("CONCAT(remedios.nome, ' (', remedios.fabricante, ') ') as remedio"))
             ->join('tratamentos', 'tratamentos.id', 'remedios_tratamentos.tratamento_id')
             ->join('opinioes', 'opinioes.id', 'tratamentos.opiniao_id')
@@ -84,7 +107,7 @@ class GraficoController extends Controller
         foreach ($query as $dados) {
             if(!isset($remedios[$dados->remedio])) {
                 $remedios[$dados->remedio] = [
-                    'eficaz' => 0,
+                    'eficaz'   => 0,
                     'ineficaz' => 0
                 ];
             }
