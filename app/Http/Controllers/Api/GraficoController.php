@@ -78,21 +78,21 @@ class GraficoController extends Controller
             $query = $query->whereIn('remedios.id', $remedios);
         }
 
-        $query = $query->groupBy('opinioes.paciente_id', 'opinioes.eficaz', 'remedios.nome', 'remedios.fabricante')
-            ->get();
+        $query = $query->get();
 
         $remedios = [];
         foreach ($query as $dados) {
-            $criarIndice = false;
-
             if(!isset($remedios[$dados->remedio])) {
-                $criarIndice = true;
+                $remedios[$dados->remedio] = [
+                    'eficaz' => 0,
+                    'ineficaz' => 0
+                ];
             }
 
             if($dados->eficaz) {
-                $remedios[$dados->remedio]['eficaz'] = $criarIndice ? 1 : +1;
+                $remedios[$dados->remedio]['eficaz']++;
             } else {
-                $remedios[$dados->remedio]['ineficaz'] = $criarIndice ? 1 : +1;
+                $remedios[$dados->remedio]['ineficaz']++;
             }
         }
 
