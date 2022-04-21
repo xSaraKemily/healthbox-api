@@ -36,8 +36,9 @@ class GraficoController extends Controller
        $query = $query->groupBy('opinioes.paciente_id', 'remedios_tratamentos.remedio_id', 'remedios.nome', 'remedios.fabricante')
            ->get();
 
+       $totalUso = $query->count();
+
        $remedios = [];
-       $totalUso = 0;
        foreach ($query as $dados) {
            if(isset($remedios[$dados->remedio])) {
                $remedios[$dados->remedio]['eixoY']++;
@@ -48,14 +49,12 @@ class GraficoController extends Controller
            } else {
                $remedios[$dados->remedio]['eixoY'] = 1;
            }
-
-           $totalUso += $remedios[$dados->remedio]['eixoY'];
        }
 
        $calculaPorcentagem = $request->filled('tipoGrafico') && $request->tipoGrafico == 'pie' ? true : false;
 
        $data = [];
-       $count = 0;
+       $count = 1;
        foreach ($remedios as $key => $m) {
            if($calculaPorcentagem) {
                //grafico pie
@@ -120,7 +119,7 @@ class GraficoController extends Controller
         }
 
         $data = [];
-        $count = 0;
+        $count = 1;
         foreach ($remedios as $key => $m) {
             $data[] = [
                 'id'             => $count++, //id ficticio para colocar cor no design do app
