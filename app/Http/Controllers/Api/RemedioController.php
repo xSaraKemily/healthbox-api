@@ -61,4 +61,13 @@ class RemedioController extends Controller
 
         return Remedio::where('nome', 'like', '%'.$request->nome.'%')->paginate(10);
     }
+
+    /**
+     * Traz todos os medicamentos usados
+     * Não tem paginacao
+     **/
+    public function getUsed()
+    {
+        return Response::json(Remedio::join('remedios_tratamentos as rt', 'rt.remedio_id', 'remedios.id')->select('remedios.*')->get());
+    }
 }

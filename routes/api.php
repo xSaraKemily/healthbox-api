@@ -51,6 +51,7 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::delete('especializacoes/{id}', [EspecializacaoController::class, 'destroy']);
 
     Route::get('remedios', [RemedioController::class, 'index']);
+    Route::get('remedios/usados', [RemedioController::class, 'getUsed']);
 
     Route::get('opinioes', [OpiniaoController::class, 'index']);
     Route::post('opinioes', [OpiniaoController::class, 'store']);
