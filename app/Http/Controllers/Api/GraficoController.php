@@ -51,26 +51,16 @@ class GraficoController extends Controller
            }
        }
 
-       $calculaPorcentagem = $request->filled('tipoGrafico') && $request->tipoGrafico == 'pie' ? true : false;
+       $graficoPie = $request->filled('tipoGrafico') && $request->tipoGrafico == 'pie' ? true : false;
 
        $data = [];
        $count = 1;
        foreach ($remedios as $key => $m) {
-           if($calculaPorcentagem) {
-               //grafico pie
-               $data[] = [
-                   'id'      => $count++, //id ficticio para colocar cor no design do app
-                   'percent' => round(($m['eixoY'] * 100) / $totalUso, 2),
-                   'label'   => $key
-               ];
-           } else {
-               //grafico bar
-               $data[] = [
-                   'id'    => $count++, //id ficticio para colocar cor no design do app
-                   'eixoY' => $m['eixoY'],
-                   'eixoX' => $key
-               ];
-           }
+           $data[] = [
+               'id'    => $count++, //id ficticio para colocar cor no design do app
+               'eixoY' => $graficoPie ? round(($m['eixoY'] * 100) / $totalUso, 2) : $m['eixoY'],
+               'eixoX' => $key
+           ];
        }
 
        return Response::json($data);
