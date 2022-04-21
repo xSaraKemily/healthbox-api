@@ -68,6 +68,6 @@ class RemedioController extends Controller
      **/
     public function getUsed()
     {
-        return Response::json(Remedio::join('remedios_tratamentos as rt', 'rt.remedio_id', 'remedios.id')->groupBy('remedios.nome', 'remedios.fabricante')->select('remedios.*')->get());
+        return Response::json(Remedio::join('remedios_tratamentos as rt', 'rt.remedio_id', 'remedios.id')->groupBy('remedios.id', 'remedios.nome', 'remedios.fabricante')->select('remedios.*')->get());
     }
 }
