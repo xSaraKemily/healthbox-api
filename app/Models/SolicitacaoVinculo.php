@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Solicitacaovinculo extends Model
+class SolicitacaoVinculo extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -24,11 +24,11 @@ class Solicitacaovinculo extends Model
 
     public function paciente()
     {
-        $this->hasOne(User::class, 'id', 'paciente_id');
+        return $this->hasOne(User::class, 'id', 'paciente_id');
     }
 
     public function medico()
     {
-        $this->hasOne(User::class, 'id', 'medico_id');
+        return $this->hasOne(User::class, 'id', 'medico_id');
     }
 }

@@ -16,7 +16,7 @@ class SolicitacaoVinculoRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,23 +29,23 @@ class SolicitacaoVinculoRequest extends FormRequest
         return [
             'medico_id'     => [
                 'required',
-                'exists:users',
+                Rule::exists('users', 'id')->where('tipo', 'M'),
                 Rule::unique('solicitacoes_vinculos')->where(function ($query) {
-                    return $query->where('medico_id', $this->medico_id)
-                        ->where('paciente_id', $this->paciente_id)
+                    return $query->where('medico_id', $this->request->get('medico_id'))
+                        ->where('paciente_id', $this->request->get('paciente_id'))
                         ->whereNull('deleted_at');
                 }),
             ],
             'paciente_id'   => [
                 'required',
-                'exists:users',
+                Rule::exists('users', 'id')->where('tipo', 'P'),
                 Rule::unique('solicitacoes_vinculos')->where(function ($query) {
-                    return $query->where('medico_id', $this->medico_id)
-                        ->where('paciente_id', $this->paciente_id)
+                    return $query->where('medico_id', $this->request->get('medico_id'))
+                        ->where('paciente_id', $this->request->get('paciente_id'))
                         ->whereNull('deleted_at');
                 }),
             ],
-            'vinculado'     => 'required|in:0,1'
+            'vinculado'     => 'in:0,1'
         ];
     }
 

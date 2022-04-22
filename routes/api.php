@@ -10,6 +10,7 @@ use \App\Http\Controllers\Api\RemedioController;
 use \App\Http\Controllers\Api\OpiniaoController;
 use \App\Http\Controllers\Api\TratamentoController;
 use \App\Http\Controllers\Api\GraficoController;
+use \App\Http\Controllers\Api\SolicitacaoVinculoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,4 +65,10 @@ Route::group(['middleware' => 'auth:api',], function () {
 
     Route::get('graficos/paciente-remedio', [GraficoController::class, 'pacienteRemedio']);
     Route::get('graficos/remedio-eficacia', [GraficoController::class, 'remedioEficacia']);
+
+    Route::get('solicitacoes-vinculos', [SolicitacaoVinculoController::class, 'index']);
+    Route::post('solicitacoes-vinculos', [SolicitacaoVinculoController::class, 'store']);
+    Route::put('solicitacoes-vinculos/{id}', [SolicitacaoVinculoController::class, 'update']);
+    Route::delete('solicitacoes-vinculos/{id}', [SolicitacaoVinculoController::class, 'destroy']);
+    Route::get('solicitacoes-vinculos/usuarios-disponiveis', [SolicitacaoVinculoController::class, 'userParaVincular']);
 });
