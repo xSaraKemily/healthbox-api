@@ -21,10 +21,16 @@ class SolicitacaoVinculoController extends Controller
     {
         $columns = self::getColumnsWhere();
 
-        return SolicitacaoVinculo::where($columns->colunaUser, auth()->user()->id)
+        $solicitacoes =  SolicitacaoVinculo::where($columns->colunaUser, auth()->user()->id)
             ->where('vinculado', $request->vinculado)
             ->with('medico')
-            ->paginate(10);
+            ->with('paciente');
+
+        if(!$request->vinculado) {
+            $solicitacoes->where('solicitante_id', '<>', auth()->user()->id);
+        }
+
+        return $solicitacoes->paginate(10);
     }
 
     /**
@@ -45,6 +51,7 @@ class SolicitacaoVinculoController extends Controller
         DB::beginTransaction();
 
         try {
+            $vinculo->solicitante_id = auth()->user()->id;
             $vinculo->save();
         } catch (\Exception $e) {
             DB::rollBack();

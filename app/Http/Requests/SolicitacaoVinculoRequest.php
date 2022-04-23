@@ -45,7 +45,8 @@ class SolicitacaoVinculoRequest extends FormRequest
                         ->whereNull('deleted_at');
                 }),
             ],
-            'vinculado'     => 'in:0,1'
+            'vinculado'      => 'nullable|in:0,1',
+            'solicitante_id' => 'nullable|exists:users,id'
         ];
     }
 

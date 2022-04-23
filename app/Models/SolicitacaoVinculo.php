@@ -15,7 +15,8 @@ class SolicitacaoVinculo extends Model
     protected $fillable = [
         'medico_id',
         'paciente_id',
-        'vinculado'
+        'vinculado',
+        'solicitante_id'
     ];
 
     protected $attributes = [
