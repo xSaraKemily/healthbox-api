@@ -15,6 +15,8 @@ return new class extends Migration
     {
        Schema::table('solicitacoes_vinculos', function (Blueprint $table) {
           $table->unsignedBigInteger('solicitante_id')->after('paciente_id');
+
+           $table->foreign('solicitante_id')->references('id')->on('users')->onDelete('cascade');
        });
     }
 
