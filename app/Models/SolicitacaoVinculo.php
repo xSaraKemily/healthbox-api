@@ -18,7 +18,7 @@ class SolicitacaoVinculo extends Model
         'vinculado'
     ];
 
-    protected $attribute = [
+    protected $attributes = [
         'vinculado' => 0
     ];
 
