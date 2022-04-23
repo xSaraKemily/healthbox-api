@@ -70,7 +70,7 @@ class LikeController extends Controller
 
         return Response::json([
             'message' => 'Like salvo com sucesso.',
-            'like' => $like
+            'ilike'' => $like
             ]);
     }
 
