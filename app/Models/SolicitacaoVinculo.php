@@ -32,4 +32,9 @@ class SolicitacaoVinculo extends Model
     {
         return $this->hasOne(User::class, 'id', 'medico_id');
     }
+
+    public function solicitante()
+    {
+        return $this->hasOne(User::class, 'id', 'solicitante_id');
+    }
 }
