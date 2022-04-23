@@ -29,7 +29,7 @@ class RemedioController extends Controller
         }
 
         //se nao existir no banco, busca na api
-        $remedios = Remedio::where('nome', 'like', '%'.$request->nome.'%')->paginate(10);
+        $remedios = Remedio::where('nome', 'ilike', '%'.$request->nome.'%')->paginate(10);
 
        if($remedios->isEmpty()) {
            $response = Http::get('https://bula.vercel.app/pesquisar', [
@@ -59,7 +59,7 @@ class RemedioController extends Controller
            return $remedios;
        }
 
-        return Remedio::where('nome', 'like', '%'.$request->nome.'%')->paginate(10);
+        return Remedio::where('nome', 'ilike', '%'.$request->nome.'%')->paginate(10);
     }
 
     /**

@@ -135,7 +135,7 @@ class SolicitacaoVinculoController extends Controller
         $users = User::select('id', 'name', 'foto_path')->where('tipo', $columns->tipoOposto)->whereNotIn('id', $vinculosUser);
 
         if($request->filled('nome')) {
-            $users->where('name', 'LIKE', "%$request->nome%");
+            $users->where('name', 'ilike', "%$request->nome%");
         }
 
         return $users->paginate(10);
