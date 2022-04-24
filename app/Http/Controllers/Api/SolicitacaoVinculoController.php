@@ -21,7 +21,7 @@ class SolicitacaoVinculoController extends Controller
 
         $solicitacoes = SolicitacaoVinculo::where($columns->colunaUser, auth()->user()->id)
             ->where('vinculado', $request->vinculado)
-            ->with(['solicitante', 'solicitado']);
+            ->with(['solicitante']);
 
         if (!$request->vinculado) {
             $solicitacoes->where('solicitante_id', '<>', auth()->user()->id);

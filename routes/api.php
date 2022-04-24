@@ -11,6 +11,7 @@ use \App\Http\Controllers\Api\OpiniaoController;
 use \App\Http\Controllers\Api\TratamentoController;
 use \App\Http\Controllers\Api\GraficoController;
 use \App\Http\Controllers\Api\SolicitacaoVinculoController;
+use \App\Http\Controllers\Api\AcompanhamentoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,5 +73,5 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::delete('solicitacoes-vinculos/{id}', [SolicitacaoVinculoController::class, 'destroy']);
     Route::get('solicitacoes-vinculos/usuarios-disponiveis', [SolicitacaoVinculoController::class, 'userParaVincular']);
 
-    Route::get('solicitacoes-vinculos/usuarios-disponiveis', [SolicitacaoVinculoController::class, 'userParaVincular']);
+    Route::post('acompanhamentos', [AcompanhamentoController::class, 'store']);
 });

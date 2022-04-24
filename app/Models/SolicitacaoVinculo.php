@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SolicitacaoVinculo extends Model
@@ -23,6 +23,19 @@ class SolicitacaoVinculo extends Model
         'vinculado' => 0
     ];
 
+    protected $appends = [
+        'solicitado'
+    ];
+
+    public function getSolicitadoAttribute()
+    {
+        if ($this->solicitante_id == $this->medico_id) {
+            return User::find($this->paciente_id);
+        }
+
+        return User::find($this->medico_id);
+    }
+
     public function paciente()
     {
         return $this->hasOne(User::class, 'id', 'paciente_id');
@@ -36,14 +49,5 @@ class SolicitacaoVinculo extends Model
     public function solicitante()
     {
         return $this->hasOne(User::class, 'id', 'solicitante_id');
-    }
-
-    public function solicitado()
-    {
-        if ($this->solicitante_id == $this->medico_id) {
-            return $this->belongsTo(User::class, 'paciente_id');
-        }
-
-        return $this->belongsTo(User::class, 'medico_id');
     }
 }
