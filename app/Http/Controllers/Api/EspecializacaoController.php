@@ -23,7 +23,7 @@ class EspecializacaoController extends Controller
        $espec =  Especializacao::select('id', 'nome');
 
        if($request->filled('nome')) {
-           $espec = $espec->where('nome', 'ilike'', "%$request->nome%");
+           $espec = $espec->where('nome', 'ilike', "%$request->nome%");
        }
 
        return $espec->paginate(100);

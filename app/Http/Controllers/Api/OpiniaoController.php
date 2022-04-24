@@ -64,7 +64,7 @@ class OpiniaoController extends Controller
                }
 
                if($request->titulo) {
-                   $query->where('tt.titulo', 'ilike'', "%$request->titulo%");
+                   $query->where('tt.titulo', 'ilike', "%$request->titulo%");
                }
             });
        }
