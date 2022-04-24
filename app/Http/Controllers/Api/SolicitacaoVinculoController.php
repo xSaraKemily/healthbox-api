@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SolicitacaoVinculoRequest;
-use App\Models\Opiniao;
-use App\Models\RemedioTratamento;
 use App\Models\SolicitacaoVinculo;
-use App\Models\Tratamento;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,11 +19,11 @@ class SolicitacaoVinculoController extends Controller
     {
         $columns = self::getColumnsWhere();
 
-        $solicitacoes =  SolicitacaoVinculo::where($columns->colunaUser, auth()->user()->id)
+        $solicitacoes = SolicitacaoVinculo::where($columns->colunaUser, auth()->user()->id)
             ->where('vinculado', $request->vinculado)
-            ->with('solicitante');
+            ->with(['solicitante', 'solicitado']);
 
-        if(!$request->vinculado) {
+        if (!$request->vinculado) {
             $solicitacoes->where('solicitante_id', '<>', auth()->user()->id);
         }
 
@@ -36,11 +34,11 @@ class SolicitacaoVinculoController extends Controller
      * @param SolicitacaoVinculoRequest $request
      * @return JsonResponse
      */
-    public function store(SolicitacaoVinculoRequest $request) : JsonResponse
+    public function store(SolicitacaoVinculoRequest $request): JsonResponse
     {
         $vinculoDeleted = SolicitacaoVinculo::where('medico_id', $request->medico_id)->where('paciente_id', $request->paciente_id)->withTrashed()->first();
 
-        if($vinculoDeleted) {
+        if ($vinculoDeleted) {
             $vinculo = $vinculoDeleted;
             $vinculo->restore();
         } else {
@@ -52,9 +50,9 @@ class SolicitacaoVinculoController extends Controller
         try {
             $vinculo->solicitante_id = auth()->user()->id;
             $vinculo->save();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Erro ao salvar vínculo '. $e);
+            Log::error('Erro ao salvar vínculo ' . $e);
 
             return Response::json(['message' => 'Erro ao salvar vínculo.'], 500);
         }
@@ -72,26 +70,26 @@ class SolicitacaoVinculoController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function update(Request $request, $id) : JsonResponse
+    public function update(Request $request, $id): JsonResponse
     {
         $vinculo = SolicitacaoVinculo::find($id);
 
-        if(!$vinculo) {
+        if (!$vinculo) {
             return Response::json(['message' => 'Vínculo não encontrado.'], 404);
         }
 
-        if($request->filled('vinculado')){
+        if ($request->filled('vinculado')) {
             $vinculo->vinculado = $request->vinculado;
         }
 
-        if($vinculo->isDirty()) {
+        if ($vinculo->isDirty()) {
             DB::beginTransaction();
 
             try {
                 $vinculo->save();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 DB::rollBack();
-                Log::error('Erro ao atualizar vínculo '. $e);
+                Log::error('Erro ao atualizar vínculo ' . $e);
 
                 return Response::json(['message' => 'Erro ao atualizar vínculo.'], 500);
             }
@@ -113,13 +111,13 @@ class SolicitacaoVinculoController extends Controller
         try {
             $vinculo = SolicitacaoVinculo::find($id);
 
-            if(!$vinculo) {
+            if (!$vinculo) {
                 return Response::json(['message' => 'Vínculo não encontrado.'], 404);
             }
 
             $vinculo->delete();
-        } catch (\Exception $e) {
-            Log::error('Erro ao deletar vínculo '. $e);
+        } catch (Exception $e) {
+            Log::error('Erro ao deletar vínculo ' . $e);
 
             return Response::json(['message' => 'Erro ao deletar vínculo'], 500);
         }
@@ -140,7 +138,7 @@ class SolicitacaoVinculoController extends Controller
 
         $users = User::select('id', 'name', 'foto_path')->where('tipo', $columns->tipoOposto)->whereNotIn('id', $vinculosUser);
 
-        if($request->filled('nome')) {
+        if ($request->filled('nome')) {
             $users->where('name', 'ilike', "%$request->nome%");
         }
 
@@ -150,17 +148,19 @@ class SolicitacaoVinculoController extends Controller
     public static function getColumnsWhere()
     {
         switch (auth()->user()->tipo) {
-            case 'M': {
-                $colunaUser = 'medico_id';
-                $colunaOposta = 'paciente_id';
-                $tipoOposto = 'P';
-            }
+            case 'M':
+                {
+                    $colunaUser = 'medico_id';
+                    $colunaOposta = 'paciente_id';
+                    $tipoOposto = 'P';
+                }
                 break;
-            case 'P': {
-                $colunaUser = 'paciente_id';
-                $colunaOposta = 'medico_id';
-                $tipoOposto = 'M';
-            }
+            case 'P':
+                {
+                    $colunaUser = 'paciente_id';
+                    $colunaOposta = 'medico_id';
+                    $tipoOposto = 'M';
+                }
                 break;
         }
 
