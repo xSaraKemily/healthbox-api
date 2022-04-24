@@ -71,4 +71,6 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::put('solicitacoes-vinculos/{id}', [SolicitacaoVinculoController::class, 'update']);
     Route::delete('solicitacoes-vinculos/{id}', [SolicitacaoVinculoController::class, 'destroy']);
     Route::get('solicitacoes-vinculos/usuarios-disponiveis', [SolicitacaoVinculoController::class, 'userParaVincular']);
+
+    Route::get('solicitacoes-vinculos/usuarios-disponiveis', [SolicitacaoVinculoController::class, 'userParaVincular']);
 });

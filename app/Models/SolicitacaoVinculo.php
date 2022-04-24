@@ -37,4 +37,13 @@ class SolicitacaoVinculo extends Model
     {
         return $this->hasOne(User::class, 'id', 'solicitante_id');
     }
+
+    public function solicitado()
+    {
+        if ($this->solicitante_id == $this->medico_id) {
+            return $this->belongsTo(User::class, 'paciente_id');
+        }
+
+        return $this->belongsTo(User::class, 'medico_id');
+    }
 }
