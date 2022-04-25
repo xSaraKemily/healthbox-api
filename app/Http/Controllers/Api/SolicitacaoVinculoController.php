@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SolicitacaoVinculoRequest;
 use App\Models\SolicitacaoVinculo;
 use App\Models\User;
+use App\Utils\Functions;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class SolicitacaoVinculoController extends Controller
 {
     public function index(Request $request)
     {
-        $columns = self::getColumnsWhere();
+        $columns = Functions::getColumnsWhere();
 
         $solicitacoes = SolicitacaoVinculo::where($columns->colunaUser, auth()->user()->id)
             ->where('vinculado', $request->vinculado)
@@ -132,7 +133,7 @@ class SolicitacaoVinculoController extends Controller
      */
     public function userParaVincular(Request $request)
     {
-        $columns = self::getColumnsWhere();
+        $columns = Functions::getColumnsWhere();
 
         $vinculosUser = SolicitacaoVinculo::where($columns->colunaUser, auth()->user()->id)->select($columns->colunaOposta)->get()->toArray();
 
@@ -143,27 +144,5 @@ class SolicitacaoVinculoController extends Controller
         }
 
         return $users->paginate(10);
-    }
-
-    public static function getColumnsWhere()
-    {
-        switch (auth()->user()->tipo) {
-            case 'M':
-                {
-                    $colunaUser = 'medico_id';
-                    $colunaOposta = 'paciente_id';
-                    $tipoOposto = 'P';
-                }
-                break;
-            case 'P':
-                {
-                    $colunaUser = 'paciente_id';
-                    $colunaOposta = 'medico_id';
-                    $tipoOposto = 'M';
-                }
-                break;
-        }
-
-        return (object)['colunaUser' => $colunaUser, 'colunaOposta' => $colunaOposta, 'tipoOposto' => $tipoOposto];
     }
 }

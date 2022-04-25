@@ -113,4 +113,13 @@ class User extends Authenticatable  implements JWTSubject
 
         return $this->hasMany(SolicitacaoVinculo::class, 'paciente_id', 'id');
     }
+
+    public function acompanhamentos()
+    {
+        if($this->tipo == 'M') {
+            return $this->hasMany(Acompanhamento::class, 'medico_id', 'id');
+        }
+
+        return $this->hasMany(Acompanhamento::class, 'paciente_id', 'id');
+    }
 }

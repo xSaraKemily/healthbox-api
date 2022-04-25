@@ -5,11 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
+use App\Models\Acompanhamento;
 use App\Models\CaracteristicaMedico;
 use App\Models\CaracteristicaPaciente;
 use App\Models\MedicoCrm;
 use App\Models\MedicoCrmEspecializacao;
+use App\Models\QuestaoQuestionarioResposta;
+use App\Models\Questionario;
 use App\Models\User;
+use App\Utils\Functions;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -20,6 +25,39 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    /**
+     * Retorna todos os usuarios que tem vinculo de acompanhamento com o usuario logado
+     */
+    public function vinculoAcompanhamentos()
+    {
+        $columns = Functions::getColumnsWhere();
+        $colunaWith = auth()->user()->tipo == 'P' ? 'medico' : 'paciente';
+
+        $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id)->with($colunaWith)->get();
+
+        $data = [];
+        foreach ($acompanhamentos as $acompanhamento) {
+            $datasRespostas = [];
+            $dataAnterior   = Carbon::parse($acompanhamento->data_inicio);
+            while(count($datasRespostas) < $acompanhamento->dias_duracao) {
+                $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
+            }
+
+            $questionario = Questionario::where('acompanhamento_id', $acompanhamento->id)
+                ->join('questoes_questionarios as ')
+                ->first();
+           if(in_array(Carbon::now()->format('Y-m-d'), $datasRespostas) && $questionario->){
+               $acompanhamento->$colunaWith->resposta_pendente = true;
+           } else {
+               $acompanhamento->$colunaWith->resposta_pendente = false;
+           }
+
+            $data[] = $acompanhamento->$colunaWith;
+        }
+
+        return $data;
+    }
+
     /**
      * Store a new user.
      *
