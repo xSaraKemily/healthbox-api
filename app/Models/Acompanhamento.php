@@ -13,14 +13,13 @@ class Acompanhamento extends Model
     protected $table = 'acompanhamentos';
 
     protected $fillable = [
-        'descricao_paciente'       => 'nullable',
-        'quantidade_periodicidade' => 'required|numeric',
-        'dias_duracao'             => 'required|numeric',
-        'data_inicio'              => 'nullable|date',
-        'medico_id'                => 'required|exists:users',
-        'paciente_id'              => 'required|exists:users',
-        'questionario_id'          => 'required|exists:questionarios',
-        'ativo'                    => 'required|in:0,1'
+        'descricao_paciente' ,
+        'quantidade_periodicidade',
+        'dias_duracao',
+        'data_inicio',
+        'medico_id',
+        'paciente_id',
+        'ativo',
     ];
 
     protected $attributes = ['ativo' => 1];

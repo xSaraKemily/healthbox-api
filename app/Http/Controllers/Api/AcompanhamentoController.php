@@ -21,6 +21,7 @@ class AcompanhamentoController extends Controller
     public function store(AcompanhamentoRequest $request) : JsonResponse
     {
         $acompanhamento = new Acompanhamento($request->all());
+        $acompanhamento->medico_id = auth()->user()->id;
 
         DB::beginTransaction();
 

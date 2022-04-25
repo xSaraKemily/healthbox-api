@@ -15,10 +15,16 @@ class Questionario extends Model
     protected $fillable = [
         'titulo',
         'descricao',
+        'acompanhamento_id'
     ];
 
     public function questoes()
     {
         return $this->hasMany(QuestaoQuestionario::class, 'questionario_id', 'id');
+    }
+
+    public function acompanhamento()
+    {
+        return $this->belongsTo(Acompanhamento::class, 'acompanhamento_id');
     }
 }

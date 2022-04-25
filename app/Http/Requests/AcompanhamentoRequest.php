@@ -34,10 +34,7 @@ class AcompanhamentoRequest extends FormRequest
             'quantidade_periodicidade' => 'required|numeric',
             'dias_duracao'             => 'required|numeric',
             'data_inicio'              => 'nullable|date',
-            'medico_id'                => 'required|exists:users,id',
             'paciente_id'              => 'required|exists:users,id',
-            'questionario_id'          => 'nullable|exists:questionarios,id',
-            'ativo'                    => 'in:1,0|default:1'
         ];
     }
 

@@ -26,8 +26,9 @@ class QuestionarioRequest extends FormRequest
     public function rules()
     {
         return [
-            'titulo'    => 'required|max:255',
-            'descricao' => 'nullable'
+            'titulo'            => 'required|max:255',
+            'descricao'         => 'nullable',
+            'acompanhamento_id' => 'required|exists:acompanhamentos,id'
         ];
     }
 
