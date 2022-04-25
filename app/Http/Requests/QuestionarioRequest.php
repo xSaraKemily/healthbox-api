@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Questionario;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -15,7 +16,11 @@ class QuestionarioRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        if(auth()->user()->tipo == 'P') {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -25,11 +30,7 @@ class QuestionarioRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'titulo'            => 'required|max:255',
-            'descricao'         => 'nullable',
-            'acompanhamento_id' => 'required|exists:acompanhamentos,id'
-        ];
+        return (new Questionario)->rules();
     }
 
     public function wantsJson()

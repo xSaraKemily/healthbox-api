@@ -18,6 +18,15 @@ class Questionario extends Model
         'acompanhamento_id'
     ];
 
+    public function rules()
+    {
+        return [
+            'titulo'            => 'required|max:255',
+            'descricao'         => 'nullable',
+            'acompanhamento_id' => 'required|exists:acompanhamentos,id'
+        ];
+    }
+
     public function questoes()
     {
         return $this->hasMany(QuestaoQuestionario::class, 'questionario_id', 'id');

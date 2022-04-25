@@ -12,6 +12,7 @@ use \App\Http\Controllers\Api\TratamentoController;
 use \App\Http\Controllers\Api\GraficoController;
 use \App\Http\Controllers\Api\SolicitacaoVinculoController;
 use \App\Http\Controllers\Api\AcompanhamentoController;
+use \App\Http\Controllers\Api\QuestionarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,4 +76,7 @@ Route::group(['middleware' => 'auth:api',], function () {
 
     Route::post('acompanhamentos', [AcompanhamentoController::class, 'store']);
     Route::put('acompanhamentos/{id}', [AcompanhamentoController::class, 'update']);
+
+    Route::post('questionarios', [QuestionarioController::class, 'store']);
+    Route::put('questionarios/{id}', [QuestionarioController::class, 'update']);
 });

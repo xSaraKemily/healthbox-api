@@ -47,6 +47,11 @@ class AcompanhamentoController extends Controller
     public function update(Request $request, $id): JsonResponse
     {
         $acompanhamento = Acompanhamento::find($id);
+
+        if (!$acompanhamento) {
+            return Response::json(['message' => 'Acompanhamento não encontrado.'], 404);
+        }
+
         $acompanhamento->fill($request->all());
 
         DB::beginTransaction();
@@ -90,6 +95,7 @@ class AcompanhamentoController extends Controller
 
                 foreach ($acompanhamento->questionario->questoes as $questao) {
                     $questao->resposta->delete();
+                    $questao->delete();
                 }
             }
 
