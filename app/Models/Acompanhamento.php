@@ -28,6 +28,17 @@ class Acompanhamento extends Model
         'data_inicio' => 'date',
     ];
 
+    public function rules()
+    {
+        return [
+            'descricao_paciente'       => 'nullable',
+            'quantidade_periodicidade' => 'required|numeric',
+            'dias_duracao'             => 'required|numeric',
+            'data_inicio'              => 'nullable|date',
+            'paciente_id'              => 'required|exists:users,id',
+        ];
+    }
+
     public function tratamento()
     {
         return $this->hasOne(Tratamento::class, 'acompanhamento_id', 'id');

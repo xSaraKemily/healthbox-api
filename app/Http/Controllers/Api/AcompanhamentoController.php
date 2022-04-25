@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\AcompanhamentoRequest;
 use App\Models\Acompanhamento;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
-use App\Http\Requests\AcompanhamentoRequest;
+use Illuminate\Support\Facades\Validator;
 
 class AcompanhamentoController extends Controller
 {
-   public function index(Request $request)
-   {
-       return Acompanhamento::select('*')->paginate(100);
-   }
+    public function index(Request $request)
+    {
+        return Acompanhamento::select('*')->paginate(100);
+    }
 
-    public function store(AcompanhamentoRequest $request) : JsonResponse
+    public function store(AcompanhamentoRequest $request): JsonResponse
     {
         $acompanhamento = new Acompanhamento($request->all());
         $acompanhamento->medico_id = auth()->user()->id;
@@ -27,9 +29,9 @@ class AcompanhamentoController extends Controller
 
         try {
             $acompanhamento->save();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Erro ao salvar acompanhamento '. $e);
+            Log::error('Erro ao salvar acompanhamento ' . $e);
 
             return Response::json(['message' => 'Erro ao salvar acompanhamento.'], 500);
         }
@@ -37,22 +39,50 @@ class AcompanhamentoController extends Controller
         DB::commit();
 
         return Response::json([
-            'message'        => 'Acompanhamento salvo com sucesso',
+            'message' => 'Acompanhamento salvo com sucesso',
             'acompanhamento' => $acompanhamento,
         ]);
     }
 
+    public function update(Request $request, $id): JsonResponse
+    {
+        $acompanhamento = Acompanhamento::find($id);
+        $acompanhamento->fill($request->all());
+
+        DB::beginTransaction();
+
+        try {
+            $validator = Validator::make($acompanhamento->getAttributes(), $acompanhamento->rules());
+
+            if($validator->fails()) {
+                return Response::json(['message' => $validator->errors()->all()], 422);
+            }
+
+            $acompanhamento->save();
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Erro ao atualizar acompanhamento ' . $e);
+
+            return Response::json(['message' => 'Erro ao atualizar acompanhamento.'], 500);
+        }
+
+        DB::commit();
+
+        return Response::json(['message' => 'Acompanhamento atualizado com sucesso']);
+    }
+
+    //todo: testar
     public function destroy($id)
     {
         try {
             $acompanhamento = Acompanhamento::find($id);
 
-            if(!$acompanhamento) {
+            if (!$acompanhamento) {
                 return Response::json(['message' => 'Acompanhamento não encontrado.'], 404);
             }
 
-            if($acompanhamento->tratamento) {
-                if($acompanhamento->tratamento->remedios) {
+            if ($acompanhamento->tratamento) {
+                if ($acompanhamento->tratamento->remedios) {
                     $acompanhamento->tratamento->remedios->delete();
                 }
 
@@ -63,8 +93,8 @@ class AcompanhamentoController extends Controller
                 }
             }
 
-        } catch (\Exception $e) {
-            Log::error('Erro ao deletar CRM '. $e);
+        } catch (Exception $e) {
+            Log::error('Erro ao deletar CRM ' . $e);
 
             return Response::json(['message' => 'Erro ao deletar especializaação'], 500);
         }

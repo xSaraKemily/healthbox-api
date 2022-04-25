@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Acompanhamento;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -29,13 +30,7 @@ class AcompanhamentoRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'descricao_paciente'       => 'nullable',
-            'quantidade_periodicidade' => 'required|numeric',
-            'dias_duracao'             => 'required|numeric',
-            'data_inicio'              => 'nullable|date',
-            'paciente_id'              => 'required|exists:users,id',
-        ];
+        return (new Acompanhamento)->rules();
     }
 
     public function wantsJson()

@@ -74,4 +74,5 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::get('solicitacoes-vinculos/usuarios-disponiveis', [SolicitacaoVinculoController::class, 'userParaVincular']);
 
     Route::post('acompanhamentos', [AcompanhamentoController::class, 'store']);
+    Route::put('acompanhamentos/{id}', [AcompanhamentoController::class, 'update']);
 });
