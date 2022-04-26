@@ -30,7 +30,7 @@ class QuestaoController extends Controller
 {
     public function index()
     {
-        return Questao::where('usuario_id', auth()->user()->id)->get();
+        return Questao::where('usuario_id', auth()->user()->id)->with('opcoes')->get();
     }
 
     public function show($id)
