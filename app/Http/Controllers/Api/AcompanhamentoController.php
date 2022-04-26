@@ -7,6 +7,7 @@ use App\Http\Requests\AcompanhamentoRequest;
 use App\Models\Acompanhamento;
 use App\Models\QuestaoQuestionarioResposta;
 use App\Models\Questionario;
+use App\Models\User;
 use App\Utils\Functions;
 use Carbon\Carbon;
 use Exception;
@@ -19,11 +20,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AcompanhamentoController extends Controller
 {
-    public function index(Request $request)
-    {
-        return Acompanhamento::select('*')->paginate(100);
-    }
-
     public function store(AcompanhamentoRequest $request): JsonResponse
     {
         $acompanhamento = new Acompanhamento($request->all());
@@ -115,7 +111,7 @@ class AcompanhamentoController extends Controller
     /**
      * Retorna todos os usuarios que tem vinculo de acompanhamento com o usuario logado
      */
-    public function usuarioVinculo()
+    public function usuarioVinculo(Request $request)
     {
         $columns = Functions::getColumnsWhere();
         $colunaWith = auth()->user()->tipo == 'P' ? 'medico' : 'paciente';
@@ -159,9 +155,19 @@ class AcompanhamentoController extends Controller
             $datas[$dataRetorno->id] = $dataRetorno;
         }
 
-        $dataFormatada = [];
-        foreach ($datas as $data) {
-            $dataFormatada[] = $data;
+        if ($request->filled('nome')) {
+            $filtroNome = User::where('name', 'like', "%$request->nome%")->pluck('id')->toArray();
+
+            $dataFormatada = [];
+            foreach ($datas as $key => $data) {
+                if(in_array($key, $filtroNome)){
+                    $dataFormatada[] = $data;
+                }
+            }
+        } else {
+            foreach ($datas as  $data) {
+                $dataFormatada[] = $data;
+            }
         }
 
         return $dataFormatada;
