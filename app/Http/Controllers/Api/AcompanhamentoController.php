@@ -20,6 +20,51 @@ use Illuminate\Support\Facades\Validator;
 
 class AcompanhamentoController extends Controller
 {
+    public function index(Request $request)
+    {
+        $columns = Functions::getColumnsWhere();
+
+        $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id);
+
+        if($request->filled('usuario_id')) {
+            $acompanhamentos = $acompanhamentos->where($columns->colunaOposta, $request->usuario_id);
+        }
+
+        $acompanhamentos = $acompanhamentos->get();
+
+        foreach ($acompanhamentos as $acompanhamento) {
+            $datasRespostas = [];
+            $dataAnterior   = Carbon::parse($acompanhamento->data_inicio);
+            while(count($datasRespostas) < $acompanhamento->dias_duracao) {
+                $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
+            }
+
+            $questionario = Questionario::where('acompanhamento_id', $acompanhamento->id)
+                ->join('questoes_questionarios as qq', 'qq.questionario_id', 'questionarios.id')
+                ->first();
+
+            $ultimaResposta = null;
+            if($questionario) {
+                $questoesIds = $questionario->questoes->pluck('id');
+
+                $ultimaResposta = QuestaoQuestionarioResposta::whereIn('questionario_questoa_id', $questoesIds)
+                    ->select('created_at')
+                    ->pluck('created_at')
+                    ->toArray();
+            }
+
+            $dataAtual = Carbon::now()->format('Y-m-d');
+
+            if(in_array($dataAtual, $datasRespostas) && (!$ultimaResposta || ($ultimaResposta && Carbon::now($ultimaResposta->created_at)->format('Y-m-d') < $dataAtual))) {
+                $acompanhamento->resposta_pendente = true;
+            } else {
+                $acompanhamento->resposta_pendente = false;
+            }
+        }
+
+       return $acompanhamentos;
+    }
+
     public function store(AcompanhamentoRequest $request): JsonResponse
     {
         $acompanhamento = new Acompanhamento($request->all());
@@ -156,7 +201,7 @@ class AcompanhamentoController extends Controller
         }
 
         if ($request->filled('nome')) {
-            $filtroNome = User::where('name', 'like', "%$request->nome%")->pluck('id')->toArray();
+            $filtroNome = User::where('name', 'ilike', "%$request->nome%")->pluck('id')->toArray();
 
             $dataFormatada = [];
             foreach ($datas as $key => $data) {
