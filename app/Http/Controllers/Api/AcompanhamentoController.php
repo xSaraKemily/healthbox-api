@@ -30,6 +30,10 @@ class AcompanhamentoController extends Controller
             $acompanhamentos = $acompanhamentos->where($columns->colunaOposta, $request->usuario_id);
         }
 
+        if($request->filled('ativo')) {
+            $acompanhamentos = $acompanhamentos->where('ativo', $request->ativo);
+        }
+
         $acompanhamentos = $acompanhamentos->get();
 
         foreach ($acompanhamentos as $acompanhamento) {
