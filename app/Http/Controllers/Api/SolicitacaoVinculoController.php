@@ -137,7 +137,11 @@ class SolicitacaoVinculoController extends Controller
 
         $vinculosUser = SolicitacaoVinculo::where($columns->colunaUser, auth()->user()->id)->select($columns->colunaOposta)->get()->toArray();
 
-        $users = User::select('id', 'name', 'foto_path')->where('tipo', $columns->tipoOposto)->whereNotIn('id', $vinculosUser);
+        $users = User::select('id', 'name', 'foto_path')->where('tipo', $columns->tipoOposto);
+
+        if(count($vinculosUser)) {
+            $users = $users->whereNotIn('id', $vinculosUser);
+        }
 
         if ($request->filled('nome')) {
             $users->where('name', 'ilike', "%$request->nome%");
