@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Questao;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -15,7 +16,11 @@ class QuestaoRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        if(auth()->user()->tipo == 'P') {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -25,10 +30,7 @@ class QuestaoRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'descricao' => 'required',
-            'tipo'      => 'required|in:O,D'
-        ];
+        return (new Questao())->rules();
     }
 
     public function wantsJson()

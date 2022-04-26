@@ -13,6 +13,7 @@ use \App\Http\Controllers\Api\GraficoController;
 use \App\Http\Controllers\Api\SolicitacaoVinculoController;
 use \App\Http\Controllers\Api\AcompanhamentoController;
 use \App\Http\Controllers\Api\QuestionarioController;
+use \App\Http\Controllers\Api\QuestaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -82,4 +83,9 @@ Route::group(['middleware' => 'auth:api',], function () {
 
     Route::post('questionarios', [QuestionarioController::class, 'store']);
     Route::put('questionarios/{id}', [QuestionarioController::class, 'update']);
+
+    Route::post('questoes', [QuestaoController::class, 'store']);
+    Route::put('questoes/{id}', [QuestaoController::class, 'update']);
+    Route::delete('questoes/{id}', [QuestaoController::class, 'destroy']);
+    Route::delete('questoes/opcoes/{id}', [QuestaoController::class, 'destroyOpcao']);
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\OpcaoQuestao;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -25,10 +26,7 @@ class OpcaoQuestaoRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'descricao'  => 'required',
-            'questao_id' => 'required|exists:questoes',
-        ];
+       return (new OpcaoQuestao())->rules();
     }
 
     public function wantsJson()

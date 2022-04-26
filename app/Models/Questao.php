@@ -16,4 +16,17 @@ class Questao extends Model
         'descricao',
         'tipo'
     ];
+
+    public function rules()
+    {
+        return [
+            'descricao' => 'required',
+            'tipo'      => 'required|in:O,D'
+        ];
+    }
+
+    public function opcoes()
+    {
+        return $this->hasMany(OpcaoQuestao::class, 'questao_id');
+    }
 }

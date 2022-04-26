@@ -17,8 +17,16 @@ class OpcaoQuestao extends Model
         'questao_id',
     ];
 
+    public function rules()
+    {
+        return [
+            'descricao'  => 'required',
+            'questao_id' => 'required|exists:questoes,id',
+        ];
+    }
+
     public function questao()
     {
-        $this->hasOne(Questao::class, 'id', 'questao_id');
+        return $this->hasOne(Questao::class, 'id', 'questao_id');
     }
 }
