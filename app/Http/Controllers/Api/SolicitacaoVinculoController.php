@@ -147,6 +147,7 @@ class SolicitacaoVinculoController extends Controller
             $users->where('name', 'ilike', "%$request->nome%");
         }
 
+        Log::debug('sql', [$users->toSql(), $users->getBindings()]);
         return $users->paginate(10);
     }
 }
