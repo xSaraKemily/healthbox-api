@@ -14,7 +14,8 @@ class Questao extends Model
 
     protected $fillable = [
         'descricao',
-        'tipo'
+        'tipo',
+        'usuario_id'
     ];
 
     public function rules()

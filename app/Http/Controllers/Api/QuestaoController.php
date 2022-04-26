@@ -28,6 +28,16 @@ use Illuminate\Support\Facades\Validator;
 
 class QuestaoController extends Controller
 {
+    public function index()
+    {
+        return Questao::where('usuario_id', auth()->user()->id)->get();
+    }
+
+    public function show($id)
+    {
+        return Questao::where('id', $id)->with('opcoes')->first();
+    }
+
     /**
      * Store a new user.
      *
@@ -36,6 +46,7 @@ class QuestaoController extends Controller
     public function store(QuestaoRequest $request) : JsonResponse
     {
         $questao = new Questao($request->all());
+        $questao->usuario_id = auth()->user()->id;
 
         if($questao->tipo == 'O' && !$request->filled('opcoes')) {
             return Response::json(['message' => 'Para questões objetivas é obrigatório informar as opções'], 422);

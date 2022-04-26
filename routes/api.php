@@ -84,6 +84,8 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::post('questionarios', [QuestionarioController::class, 'store']);
     Route::put('questionarios/{id}', [QuestionarioController::class, 'update']);
 
+    Route::get('questoes', [QuestaoController::class, 'index']);
+    Route::get('questoes/{id}', [QuestaoController::class, 'show']);
     Route::post('questoes', [QuestaoController::class, 'store']);
     Route::put('questoes/{id}', [QuestaoController::class, 'update']);
     Route::delete('questoes/{id}', [QuestaoController::class, 'destroy']);
