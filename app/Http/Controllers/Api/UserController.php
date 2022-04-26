@@ -26,39 +26,6 @@ use Illuminate\Support\Facades\Validator;
 class UserController extends Controller
 {
     /**
-     * Retorna todos os usuarios que tem vinculo de acompanhamento com o usuario logado
-     */
-    public function vinculoAcompanhamentos()
-    {
-        $columns = Functions::getColumnsWhere();
-        $colunaWith = auth()->user()->tipo == 'P' ? 'medico' : 'paciente';
-
-        $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id)->with($colunaWith)->get();
-
-        $data = [];
-        foreach ($acompanhamentos as $acompanhamento) {
-            $datasRespostas = [];
-            $dataAnterior   = Carbon::parse($acompanhamento->data_inicio);
-            while(count($datasRespostas) < $acompanhamento->dias_duracao) {
-                $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
-            }
-
-            $questionario = Questionario::where('acompanhamento_id', $acompanhamento->id)
-                ->join('questoes_questionarios as ')
-                ->first();
-           if(in_array(Carbon::now()->format('Y-m-d'), $datasRespostas) && $questionario->){
-               $acompanhamento->$colunaWith->resposta_pendente = true;
-           } else {
-               $acompanhamento->$colunaWith->resposta_pendente = false;
-           }
-
-            $data[] = $acompanhamento->$colunaWith;
-        }
-
-        return $data;
-    }
-
-    /**
      * Store a new user.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -348,6 +315,6 @@ class UserController extends Controller
             $validacao['cpf']['validate'] = $bool;
         }
 
-        return Response::json($validacao, 200);
+        return Response::json($validacao);
     }
 }

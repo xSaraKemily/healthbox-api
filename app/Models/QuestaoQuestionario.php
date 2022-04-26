@@ -19,7 +19,7 @@ class QuestaoQuestionario extends Model
 
     public function questionario()
     {
-        return $this->hasOne(Questionario::class, 'id', 'questionario_id');
+        return $this->belongsTo(Questionario::class, 'id', 'questionario_id');
     }
 
     public function questao()

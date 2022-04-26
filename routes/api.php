@@ -42,8 +42,6 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::put('usuarios/{id}', [UserController::class, 'update']);
     Route::delete('usuarios/{id}', [UserController::class, 'destroy']);
 
-    Route::get('usuarios/vinculos-acompanhamentos', [UserController::class, 'vinculoAcompanhamentos']);
-
     Route::get('likes', [LikeController::class, 'index']);
     Route::post('likes', [LikeController::class, 'store']);
     Route::delete('likes/{id}',  [LikeController::class, 'destroy']);
@@ -78,6 +76,8 @@ Route::group(['middleware' => 'auth:api',], function () {
 
     Route::post('acompanhamentos', [AcompanhamentoController::class, 'store']);
     Route::put('acompanhamentos/{id}', [AcompanhamentoController::class, 'update']);
+    Route::get('acompanhamentos/vinculos-usuarios', [AcompanhamentoController::class, 'usuarioVinculo']);
+
 
     Route::post('questionarios', [QuestionarioController::class, 'store']);
     Route::put('questionarios/{id}', [QuestionarioController::class, 'update']);

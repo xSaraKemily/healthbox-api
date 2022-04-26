@@ -29,7 +29,7 @@ class Questionario extends Model
 
     public function questoes()
     {
-        return $this->hasMany(QuestaoQuestionario::class, 'questionario_id', 'id');
+        return $this->hasMany(QuestaoQuestionario::class, 'questionario_id');
     }
 
     public function acompanhamento()

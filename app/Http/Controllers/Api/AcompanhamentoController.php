@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AcompanhamentoRequest;
 use App\Models\Acompanhamento;
+use App\Models\QuestaoQuestionarioResposta;
+use App\Models\Questionario;
+use App\Utils\Functions;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -106,5 +110,60 @@ class AcompanhamentoController extends Controller
         }
 
         return Response::json(['message' => 'Especializaação deletado com sucesso.']);
+    }
+
+    /**
+     * Retorna todos os usuarios que tem vinculo de acompanhamento com o usuario logado
+     */
+    public function usuarioVinculo()
+    {
+        $columns = Functions::getColumnsWhere();
+        $colunaWith = auth()->user()->tipo == 'P' ? 'medico' : 'paciente';
+
+        $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id)->with($colunaWith)->get();
+
+        $datas = [];
+        foreach ($acompanhamentos as $acompanhamento) {
+            $datasRespostas = [];
+            $dataAnterior   = Carbon::parse($acompanhamento->data_inicio);
+            while(count($datasRespostas) < $acompanhamento->dias_duracao) {
+                $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
+            }
+
+            $questionario = Questionario::where('acompanhamento_id', $acompanhamento->id)
+                ->join('questoes_questionarios as qq', 'qq.questionario_id', 'questionarios.id')
+                ->first();
+
+            $ultimaResposta = null;
+            if($questionario) {
+                $questoesIds = $questionario->questoes->pluck('id');
+
+                $ultimaResposta = QuestaoQuestionarioResposta::whereIn('questionario_questoa_id', $questoesIds)
+                    ->select('created_at')
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+            }
+
+            $dataAtual = Carbon::now()->format('Y-m-d');
+
+            if(in_array($dataAtual, $datasRespostas) && (!$ultimaResposta || ($ultimaResposta && Carbon::now($ultimaResposta->created_at)->format('Y-m-d') < $dataAtual))) {
+                $acompanhamento->$colunaWith->resposta_pendente = true;
+            } else {
+                $acompanhamento->$colunaWith->resposta_pendente = false;
+            }
+
+            $dataRetorno = $acompanhamento->$colunaWith;
+
+            $dataRetorno->caracteristica;
+
+            $datas[$dataRetorno->id] = $dataRetorno;
+        }
+
+        $dataFormatada = [];
+        foreach ($datas as $data) {
+            $dataFormatada[] = $data;
+        }
+
+        return $dataFormatada;
     }
 }
