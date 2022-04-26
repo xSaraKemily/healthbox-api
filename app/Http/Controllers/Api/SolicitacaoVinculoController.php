@@ -135,12 +135,12 @@ class SolicitacaoVinculoController extends Controller
     {
         $columns = Functions::getColumnsWhere();
 
-        $vinculosUser = SolicitacaoVinculo::where($columns->colunaUser, auth()->user()->id)->select($columns->colunaOposta)->get()->toArray();
+        $vinculosUser = SolicitacaoVinculo::where($columns->colunaUser, auth()->user()->id)->select($columns->colunaOposta)->pluck($columns->colunaOposta)->toArray();
 
         $users = User::select('id', 'name', 'foto_path')->where('tipo', $columns->tipoOposto);
 
         if ($request->filled('nome')) {
-            $users->where('name', 'ilike', '%'.$request->nome.'%');
+            $users->where('name', 'ilike', "%$request->nome%");
         }
 
         if(count($vinculosUser)) {
