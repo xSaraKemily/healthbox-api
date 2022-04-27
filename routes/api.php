@@ -90,4 +90,6 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::put('questoes/{id}', [QuestaoController::class, 'update']);
     Route::delete('questoes/{id}', [QuestaoController::class, 'destroy']);
     Route::delete('questoes/opcoes/{id}', [QuestaoController::class, 'destroyOpcao']);
+    Route::post('questoes/vinculos', [QuestaoController::class, 'vincularQuestaoQuestionario']);
+    Route::delete('questoes/vinculos/{id}', [QuestaoController::class, 'destroyVinculo']);
 });

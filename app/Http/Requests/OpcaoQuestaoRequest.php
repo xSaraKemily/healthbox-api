@@ -16,7 +16,11 @@ class OpcaoQuestaoRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        if(auth()->user()->tipo == 'P') {
+            return false;
+        }
+
+        return true;
     }
 
     /**

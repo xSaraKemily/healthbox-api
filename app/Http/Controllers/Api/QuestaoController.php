@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QuestaoQuestionarioRequest;
 use App\Http\Requests\QuestaoRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\Acompanhamento;
@@ -13,6 +14,7 @@ use App\Models\MedicoCrm;
 use App\Models\MedicoCrmEspecializacao;
 use App\Models\OpcaoQuestao;
 use App\Models\Questao;
+use App\Models\QuestaoQuestionario;
 use App\Models\QuestaoQuestionarioResposta;
 use App\Models\Questionario;
 use App\Models\User;
@@ -171,5 +173,46 @@ class QuestaoController extends Controller
         }
 
         return Response::json(['message' => 'Opção deletada com sucesso.'], 200);
+    }
+
+    public function vincularQuestaoQuestionario(QuestaoQuestionarioRequest $request) : JsonResponse
+    {
+        $vinculo = new QuestaoQuestionario($request->all());
+
+        DB::beginTransaction();
+        try {
+            $vinculo->save();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Erro ao salvar vínculo'. $e);
+
+            return Response::json(['message' => 'Erro ao salvar vínculo'], 500);
+        }
+
+        DB::commit();
+
+        return Response::json([
+            'message'    => 'Vínculo salvo com sucesso',
+            'vinculo'    => $vinculo,
+        ]);
+    }
+
+    public function destroyVinculo($id)
+    {
+        try {
+            $vinculo = QuestaoQuestionario::find($id);
+
+            if(!$vinculo) {
+                return Response::json(['message' => 'Vínculo não encontrada'], 404);
+            }
+
+            $vinculo->forceDelete();
+        } catch (\Exception $e) {
+            Log::error('Erro ao deletar vínculo '. $e);
+
+            return Response::json(['message' => 'Erro ao deletar vínculo'], 500);
+        }
+
+        return Response::json(['message' => 'Vínculo deletado com sucesso.'], 200);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class QuestaoQuestionarioRequest extends FormRequest
 {
@@ -15,7 +16,11 @@ class QuestaoQuestionarioRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        if(auth()->user()->tipo == 'P') {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -26,8 +31,15 @@ class QuestaoQuestionarioRequest extends FormRequest
     public function rules()
     {
         return [
-            'questionario_id' => 'required:exists:questionarios',
-            'questao_id'      => 'required:exists:questoes',
+            'questionario_id' => [
+                'required',
+                'exists:questionarios,id',
+                Rule::unique('questoes_questionarios')->where(function ($query) {
+                    return $query->where('questionario_id', $this->request->get('questionario_id'))
+                        ->where('questao_id', $this->request->get('questao_id'));
+                })->ignore($this->id),
+            ],
+            'questao_id' => 'required:exists:questoes,id',
         ];
     }
 
