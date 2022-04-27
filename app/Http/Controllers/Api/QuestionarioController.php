@@ -19,7 +19,7 @@ class QuestionarioController extends Controller
 {
     public function index(Request $request)
     {
-        return Questionario::select('*')->paginate(100);
+        return Questionario::select('*')->with('questoes')->paginate(100);
     }
 
     public function store(QuestionarioRequest $request): JsonResponse
