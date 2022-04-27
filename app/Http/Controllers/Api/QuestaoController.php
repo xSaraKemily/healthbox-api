@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QuestaoQuestionarioRequest;
+use App\Http\Requests\QuestaoQuestionarioRespostaRequest;
 use App\Http\Requests\QuestaoRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\Acompanhamento;
@@ -179,6 +180,8 @@ class QuestaoController extends Controller
     {
         DB::beginTransaction();
         try {
+            QuestaoQuestionario::where('questionario_id', $request->vinculos[0]['questionario_id'])->forceDelete();
+
             $arrId = [];
             foreach ($request->vinculos as $vinculo) {
                 $vinculo = new QuestaoQuestionario($vinculo);
@@ -226,5 +229,53 @@ class QuestaoController extends Controller
         }
 
         return Response::json(['message' => 'Vínculo deletado com sucesso.'], 200);
+    }
+
+    public function storeResposta(Request $request) : JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            if(!$request->filled('questionario_id')) {
+                return Response::json(['message' => 'É obrigatório o id do questionario.'], 422);
+            }
+
+            $questionario = Questionario::find($request->questionario_id);
+
+            if(!$questionario){
+                return Response::json(['message' => 'Questionario não encontrado.'], 404);
+            }
+
+            foreach ($questionario->questoes as $questao) {
+                if($questao->resposta && Carbon::parse($questao->resposta->created_at)->format('Y-m-d') == Carbon::now()->format('Y-m-d')) {
+                    $questao->resposta->forceDelete();
+                }
+            }
+
+            $arrId = [];
+            foreach ($request->respostas as $resposta) {
+                $resposta = new QuestaoQuestionarioResposta($resposta);
+
+                $validator = Validator::make($resposta->getAttributes(), $resposta->rules());
+                if($validator->fails()) {
+                    return Response::json(['message' => $validator->errors()->all()], 422);
+                }
+
+                $resposta->save();
+
+                $arrId[] = $resposta->id;
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Erro ao salvar respostas'. $e);
+
+            return Response::json(['message' => 'Erro ao salvar respostas'], 500);
+        }
+
+        DB::commit();
+
+        return Response::json([
+            'message'   => 'Respostas salvas com sucesso',
+            'respostas' => QuestaoQuestionarioResposta::whereIn('id', $arrId)->get(),
+        ]);
     }
 }

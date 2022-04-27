@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class QuestaoQuestionarioRespostaRequest extends FormRequest
 {
@@ -27,8 +28,15 @@ class QuestaoQuestionarioRespostaRequest extends FormRequest
     {
         return [
             'resposta_descritiva'       => 'required_without:opcao_id',
-            'opcao_id'                  => 'required_without:resposta_descritiva|exists:opcoes_questoes',
-            'questionario_questao_id'   => 'required|exists:questoes_questionarios',
+            'opcao_id'                  => [
+                'required_without:resposta_descritiva',
+                'exists:opcoes_questoes,id',
+                Rule::unique('tratamentos')->where(function ($query) {
+                    return $query->where('opiniao_id', $this->request->get('opiniao_id'))
+                        ->whereNull('deleted_at');
+                })
+            ],
+            'questionario_questao_id'   => 'required|exists:questoes_questionarios,id',
         ];
     }
 

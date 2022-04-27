@@ -92,4 +92,5 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::delete('questoes/opcoes/{id}', [QuestaoController::class, 'destroyOpcao']);
     Route::post('questoes/vinculos', [QuestaoController::class, 'vincularQuestaoQuestionario']);
     Route::delete('questoes/vinculos/{id}', [QuestaoController::class, 'destroyVinculo']);
+    Route::post('questoes/respostas', [QuestaoController::class, 'storeResposta']);
 });
