@@ -175,13 +175,25 @@ class QuestaoController extends Controller
         return Response::json(['message' => 'Opção deletada com sucesso.'], 200);
     }
 
-    public function vincularQuestaoQuestionario(QuestaoQuestionarioRequest $request) : JsonResponse
+    public function vincularQuestaoQuestionario(Request $request) : JsonResponse
     {
-        $vinculo = new QuestaoQuestionario($request->all());
-
         DB::beginTransaction();
         try {
-            $vinculo->save();
+            $arrId = [];
+            foreach ($request->vinculos as $vinculo) {
+                $vinculo = new QuestaoQuestionario($vinculo);
+
+                $validator = Validator::make($vinculo->getAttributes(), $vinculo->rules());
+
+                if($validator->fails()) {
+                    DB::rollBack();
+                    return Response::json(['message' => $validator->errors()->all()], 422);
+                }
+
+                $vinculo->save();
+
+                $arrId[] = $vinculo->id;
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erro ao salvar vínculo'. $e);
@@ -192,8 +204,8 @@ class QuestaoController extends Controller
         DB::commit();
 
         return Response::json([
-            'message'    => 'Vínculo salvo com sucesso',
-            'vinculo'    => $vinculo,
+            'message'    => 'Vínculos salvos com sucesso',
+            'vinculos'   => QuestaoQuestionario::whereIn('id', $arrId)->get(),
         ]);
     }
 

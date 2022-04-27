@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Validation\Rule;
 
 class QuestaoQuestionario extends Model
 {
@@ -16,6 +17,21 @@ class QuestaoQuestionario extends Model
         'questionario_id',
         'questao_id',
     ];
+
+    public function rules()
+    {
+        return [
+            'questionario_id' => [
+                'required',
+                'exists:questionarios,id',
+                Rule::unique('questoes_questionarios')->where(function ($query) {
+                    return $query->where('questionario_id', $this->questionario_id)
+                        ->where('questao_id', $this->questao_id);
+                })->ignore($this->id),
+            ],
+            'questao_id' => 'required:exists:questoes,id',
+        ];
+    }
 
     public function questionario()
     {
