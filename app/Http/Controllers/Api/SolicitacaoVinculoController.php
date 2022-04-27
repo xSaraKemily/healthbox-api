@@ -116,6 +116,9 @@ class SolicitacaoVinculoController extends Controller
                 return Response::json(['message' => 'Vínculo não encontrado.'], 404);
             }
 
+            $vinculo->vinculado = 0;
+            $vinculo->save();
+
             $vinculo->delete();
         } catch (Exception $e) {
             Log::error('Erro ao deletar vínculo ' . $e);
