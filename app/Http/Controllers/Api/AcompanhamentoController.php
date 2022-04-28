@@ -51,7 +51,7 @@ class AcompanhamentoController extends Controller
             if($questionario) {
                 $questoesIds = $questionario->questoes->pluck('id');
 
-                $ultimaResposta = QuestaoQuestionarioResposta::whereIn('questionario_questoa_id', $questoesIds)
+                $ultimaResposta = QuestaoQuestionarioResposta::whereIn('questionario_questao_id', $questoesIds)
                     ->select('created_at')
                     ->pluck('created_at')
                     ->toArray();
