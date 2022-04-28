@@ -210,10 +210,7 @@ class AcompanhamentoController extends Controller
             $dataRetorno = $acompanhamento->$colunaWith;
 
             $dataRetorno->caracteristica;
-
-            if($colunaWith == 'medico_id') {
-                $dataRetorno->crms;
-            }
+            $dataRetorno->crms;
 
             $datas[$dataRetorno->id] = $dataRetorno;
         }
