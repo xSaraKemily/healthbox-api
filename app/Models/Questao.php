@@ -18,6 +18,21 @@ class Questao extends Model
         'usuario_id'
     ];
 
+    protected $appends = [
+        'utilizado'
+    ];
+
+    public function getUtilizadoAttribute()
+    {
+       $questoes = QuestaoQuestionario::whereHas('resposta')->pluck('questao_id')->toArray();
+
+       if(in_array($this->id, $questoes)) {
+           return true;
+       }
+
+        return false;
+    }
+
     public function rules()
     {
         return [
