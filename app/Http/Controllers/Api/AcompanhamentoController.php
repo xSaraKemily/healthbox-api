@@ -24,7 +24,17 @@ class AcompanhamentoController extends Controller
     {
         $columns = Functions::getColumnsWhere();
 
-        $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id);
+        $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id)
+            ->with(['tratamento' => function($query) {
+                $query->with(['remedios']);
+            }])
+            ->with(['questionario' => function($query) {
+                $query->with(['questoes' => function($query) {
+                    $query->with(['questao' => function($query) {
+                        $query->with('opcoes');
+                    }]);
+                }]);
+            }]);
 
         if($request->filled('usuario_id')) {
             $acompanhamentos = $acompanhamentos->where($columns->colunaOposta, $request->usuario_id);
@@ -200,6 +210,10 @@ class AcompanhamentoController extends Controller
             $dataRetorno = $acompanhamento->$colunaWith;
 
             $dataRetorno->caracteristica;
+
+            if($colunaWith == 'medico_id') {
+                $dataRetorno->crms;
+            }
 
             $datas[$dataRetorno->id] = $dataRetorno;
         }

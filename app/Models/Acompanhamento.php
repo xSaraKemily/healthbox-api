@@ -46,7 +46,7 @@ class Acompanhamento extends Model
 
     public function questionario()
     {
-        return $this->hasOne(Questionario::class, 'questionario_id', 'id');
+        return $this->hasOne(Questionario::class, 'acompanhamento_id');
     }
 
     public function medico()
