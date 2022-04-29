@@ -227,10 +227,11 @@ class AcompanhamentoController extends Controller
             $datas[$dataRetorno->id] = $dataRetorno;
         }
 
+        $dataFormatada = [];
         if ($request->filled('nome')) {
             $filtroNome = User::where('name', 'ilike', "%$request->nome%")->pluck('id')->toArray();
 
-            $dataFormatada = [];
+
             foreach ($datas as $key => $data) {
                 if(in_array($key, $filtroNome)){
                     $dataFormatada[] = $data;
