@@ -25,7 +25,12 @@ class AcompanhamentoController extends Controller
         $columns = Functions::getColumnsWhere();
 
         $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id)
-            ->with(['medico', 'paciente'])
+            ->with(['medico' => function($query) {
+                $query->with(['caracteristica', 'crms']);
+            }])
+            ->with(['paciente' => function($query) {
+                $query->with(['caracteristica']);
+            }])
             ->with(['tratamento' => function($query) {
                 $query->with(['remedios' => function($query) {
                     $query->with('remedio');
