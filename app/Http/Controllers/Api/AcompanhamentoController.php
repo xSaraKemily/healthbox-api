@@ -26,7 +26,7 @@ class AcompanhamentoController extends Controller
 
         $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id)
             ->with(['medico' => function($query) {
-                $query->with(['caracteristica', 'crms']);
+                $query->with('crms');
             }])
             ->with(['paciente' => function($query) {
                 $query->with(['caracteristica']);
@@ -81,6 +81,10 @@ class AcompanhamentoController extends Controller
                 $acompanhamento->resposta_pendente = true;
             } else {
                 $acompanhamento->resposta_pendente = false;
+            }
+
+            if($acompanhamento->medico) {
+                $acompanhamento->medico->caracteristica;
             }
         }
 

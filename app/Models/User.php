@@ -29,6 +29,7 @@ class User extends Authenticatable  implements JWTSubject
         'foto_path',
         'comorbidades',
         'alergias',
+        'pre_disposicoes',
         'ativo',
     ];
 
@@ -91,14 +92,14 @@ class User extends Authenticatable  implements JWTSubject
         ];
     }
 
-    public function caracteristica()
+    public function caracteristica($tipo = null)
     {
         //se for medico
-        if($this->tipo == 'M') {
-            return $this->hasOne(CaracteristicaMedico::class, 'medico_id', 'id');
+        if($this->tipo == 'M' || $tipo == 'M') {
+            return $this->hasOne(CaracteristicaMedico::class, 'medico_id');
         } else {
             //se for paciente
-            return $this->hasOne(CaracteristicaPaciente::class, 'paciente_id', 'id');
+            return $this->hasOne(CaracteristicaPaciente::class, 'paciente_id');
         }
     }
 
