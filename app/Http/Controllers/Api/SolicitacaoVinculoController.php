@@ -24,7 +24,7 @@ class SolicitacaoVinculoController extends Controller
             ->where('vinculado', $request->vinculado)
             ->with('solicitante')
             ->with(['paciente' => function($query) {
-                $query->with('caracteristicas');
+                $query->with('caracteristica');
             }]);
 
         if (!$request->vinculado) {
