@@ -18,6 +18,9 @@ class CaracteristicaPaciente extends Model
         'peso',
         'altura',
         'paciete_id',
+        'comorbidades',
+        'pre_disposicoes',
+        'alergias_remedios',
     ];
 
     protected $casts = [
@@ -36,6 +39,9 @@ class CaracteristicaPaciente extends Model
                 Rule::exists('users', 'id')->where('tipo', 'P'),
                 Rule::unique('caracteristicas_paciente') ->whereNull('deleted_at')->where('paciente_id', $this->paciente_id)->ignore($this->id)
             ],
+            'comorbidades'      => 'nullable',
+            'pre_disposicoes'   => 'nullable',
+            'alergias_remedios' => 'nullable',
         ];
     }
 
