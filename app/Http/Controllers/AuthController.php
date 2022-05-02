@@ -44,7 +44,9 @@ class AuthController extends Controller
     {
         $user = User::find(auth()->user()->id);
 
-        $user->caracteristica->makeHidden(['created_at', 'updated_at']);
+        if($user->caracteristica) {
+            $user->caracteristica->makeHidden(['created_at', 'updated_at']);
+        }
 
         if($user->tipo == 'M') {
             foreach ($user->crms as $crm) {
