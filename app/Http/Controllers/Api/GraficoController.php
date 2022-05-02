@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\QuestaoQuestionario;
 use Illuminate\Http\Request;
 use App\Models\RemedioTratamento;
 use App\Http\Controllers\Controller;
@@ -82,6 +83,72 @@ class GraficoController extends Controller
             ->join('remedios', 'remedios.id', 'remedios_tratamentos.remedio_id');
 
         if($request->filled('remedios')) {
+            $remedios = $request->remedios;
+            if(!is_array($remedios)) {
+                $remedios = explode(',', $remedios);
+            }
+
+            $query = $query->whereIn('remedios.id', $remedios);
+        }
+
+        $query = $query->get();
+
+        $remedios = [];
+        foreach ($query as $dados) {
+            if(!isset($remedios[$dados->remedio])) {
+                $remedios[$dados->remedio] = [
+                    'eficaz'   => 0,
+                    'ineficaz' => 0
+                ];
+            }
+
+            if($dados->eficaz) {
+                $remedios[$dados->remedio]['eficaz']++;
+            } else {
+                $remedios[$dados->remedio]['ineficaz']++;
+            }
+        }
+
+        $data = [];
+        $count = 1;
+        foreach ($remedios as $key => $m) {
+            $data[] = [
+                'id'             => $count++, //id ficticio para colocar cor no design do app
+                'eixoY_eficaz'   => isset($m['eficaz']) ? $m['eficaz'] : 0,
+                'eixoY_ineficaz' => isset($m['ineficaz']) ? $m['ineficaz'] : 0,
+                'eixoX'          => $key
+            ];
+        }
+
+        return Response::json($data);
+    }
+
+    /**
+     * Remedio x quantidade de resposta de acompanhamento com melhora de sintomas
+     * grafico pie
+     */
+    public function remedioMelhora(Request $request)
+    {
+        if(!$request->filled('remedios')) {
+            return Response::json([]);
+        }
+
+        $query = RemedioTratamento::select(
+                'remedios_tratamentos.remedio_id',
+                'acompanhamentos.paciente_id',
+                DB::raw("CONCAT(remedios.nome, ' (', remedios.fabricante, ') ') as remedio"),
+                'qq.questao_id',
+            )
+            ->join('tratamentos', 'tratamentos.id', 'remedios_tratamentos.tratamento_id')
+            ->join('acompanhamentos', 'acompanhamentos.id', 'tratamentos.acompanhamento_id')
+            ->join('remedios', 'remedios.id', 'remedios_tratamentos.remedio_id')
+            ->join('questionarios', 'questionarios.acompanhamento_id', 'acompanhamentos.id')
+            ->join('questoes_questionarios as qq', function($query) {
+                $query->on('qq.questionario_id', 'questionarios.id')
+                    ->where('questao_id', 1);
+            });
+
+        if($request->remedios) {
             $remedios = $request->remedios;
             if(!is_array($remedios)) {
                 $remedios = explode(',', $remedios);

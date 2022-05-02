@@ -36,7 +36,6 @@ class QuestionarioController extends Controller
         try {
             $questionario->save();
 
-
             QuestaoQuestionario::insert([
                 ['questionario_id' => $questionario->id, 'questao_id' => 1],
                 ['questionario_id' => $questionario->id, 'questao_id' => 2]
