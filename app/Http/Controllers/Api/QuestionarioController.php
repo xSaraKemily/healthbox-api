@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AcompanhamentoRequest;
 use App\Http\Requests\QuestionarioRequest;
 use App\Models\Acompanhamento;
+use App\Models\QuestaoQuestionario;
 use App\Models\Questionario;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -34,6 +35,12 @@ class QuestionarioController extends Controller
 
         try {
             $questionario->save();
+
+
+            QuestaoQuestionario::insert([
+                ['questionario_id' => $questionario->id, 'questao_id' => 1],
+                ['questionario_id' => $questionario->id, 'questao_id' => 2]
+            ]);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Erro ao salvar questionário ' . $e);
