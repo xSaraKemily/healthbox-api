@@ -253,10 +253,6 @@ class QuestaoController extends Controller
 
             $arrId = [];
             foreach ($request->respostas as $resposta) {
-                $resposta['questionario_questao_id'] = QuestaoQuestionario::where('questionario_id', $questionario->id)
-                    ->where('questao_id', $resposta['questao_id'])
-                     ->first()->id;
-
                 $resposta = new QuestaoQuestionarioResposta($resposta);
 
                 $validator = Validator::make($resposta->getAttributes(), $resposta->rules());
