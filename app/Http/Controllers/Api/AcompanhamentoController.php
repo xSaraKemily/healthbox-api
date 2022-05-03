@@ -123,11 +123,9 @@ class AcompanhamentoController extends Controller
                 $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
             }
 
-            $questionario = Questionario::where('acompanhamento_id', $acompanhamento->id);
-
             $respostas = [];
 
-            if($quest = $questionario->first()) {
+            if($quest = Questionario::where('acompanhamento_id', $acompanhamento->id)->first()) {
                 $questoesIds = $quest->questoes->pluck('id');
 
                 $respostas = QuestaoQuestionarioResposta::whereIn('questionario_questao_id', $questoesIds)
@@ -147,7 +145,8 @@ class AcompanhamentoController extends Controller
                     $pendente = false;
                 }
 
-                $questionario = $questionario->with(['questoes' => function($query) use($data, $respostas, $pendente){
+                $questionario = Questionario::where('acompanhamento_id', $acompanhamento->id)
+                    ->with(['questoes' => function($query) use($data, $respostas, $pendente){
                     $query->with(['questao' => function($query) {
                         $query->with('opcoes');
                     }]);
