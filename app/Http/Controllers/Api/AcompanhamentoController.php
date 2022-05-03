@@ -102,12 +102,7 @@ class AcompanhamentoController extends Controller
         $columns = Functions::getColumnsWhere();
 
         $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id)
-            ->with(['medico' => function($query) {
-                $query->with('caracteristica');
-            }])
-            ->with(['paciente' => function($query) {
-                $query->with('caracteristica');
-            }]);
+            ->with(['medico', 'paciente']);
 
         if($request->filled('usuario_id')) {
             $acompanhamentos = $acompanhamentos->where($columns->colunaOposta, $request->usuario_id);
@@ -164,7 +159,19 @@ class AcompanhamentoController extends Controller
 
                 $questionario->data_resposta     = $data;
                 $questionario->resposta_pendente = $pendente;
-                $questionario->usuario_vinculado = auth()->user()->tipo == 'P' ? $acompanhamento->medico : $acompanhamento->paciente;
+                $questionario->titulo            = $acompanhamento->tratamento->titulo;
+
+                if(auth()->user()->tipo == 'P') {
+                    $acompanhamento->medico;
+                    $acompanhamento->medico->caracteristica;
+
+                    $questionario->usuario_vinculado = $acompanhamento->medico;
+                } else {
+                    $acompanhamento->paciente;
+                    $acompanhamento->paciente->caracteristica;
+
+                    $questionario->usuario_vinculado = $acompanhamento->paciente;
+                }
 
                 $questionarios[] = $questionario;
             }

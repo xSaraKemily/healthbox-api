@@ -92,7 +92,7 @@ class User extends Authenticatable  implements JWTSubject
     public function caracteristica($tipo = null)
     {
         //se for medico
-        if($this->tipo == 'M' || $tipo == 'M') {
+        if($this->tipo == 'M') {
             return $this->hasOne(CaracteristicaMedico::class, 'medico_id');
         } else {
             //se for paciente
