@@ -158,6 +158,7 @@ class AcompanhamentoController extends Controller
 
                 $questionario->data_resposta     = $data;
                 $questionario->resposta_pendente = $pendente;
+                $questionario->usuario_vinculado = auth()->user()->tipo == 'P' ? $acompanhamento->medico : $acompanhamento->paciente;
 
                 $questionarios[] = $questionario;
             }
