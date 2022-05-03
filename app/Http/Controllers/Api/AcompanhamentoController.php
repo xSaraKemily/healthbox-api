@@ -71,9 +71,8 @@ class AcompanhamentoController extends Controller
                 $questoesIds = $questionario->questoes->pluck('id');
 
                 $ultimaResposta = QuestaoQuestionarioResposta::whereIn('questionario_questao_id', $questoesIds)
-                    ->select('created_at')
-                    ->pluck('created_at')
-                    ->toArray();
+                    ->orderBy('created_at', 'desc')
+                    ->first();
             }
 
             $dataAtual = Carbon::now()->format('Y-m-d');
@@ -90,6 +89,81 @@ class AcompanhamentoController extends Controller
         }
 
        return $acompanhamentos;
+    }
+
+    /**
+     * @param Request $request
+     * @return mixed
+     *
+     * Retorna todos os questionarios e datas que devem ser respondidos
+     */
+    public function questionariosResponder(Request $request)
+    {
+        $columns = Functions::getColumnsWhere();
+
+        $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id);
+
+        if($request->filled('usuario_id')) {
+            $acompanhamentos = $acompanhamentos->where($columns->colunaOposta, $request->usuario_id);
+        }
+
+        if($request->filled('acompanhamento_id')) {
+            $acompanhamentos = $acompanhamentos->where('id', $request->acompanhamento_id);
+        }
+
+        $acompanhamentos = $acompanhamentos->get();
+
+        $questionarios = [];
+        foreach ($acompanhamentos as $acompanhamento) {
+            $dataAnterior     = Carbon::parse($acompanhamento->data_inicio);
+            $datasRespostas[] = $dataAnterior->format('Y-m-d');
+
+            while(count($datasRespostas) < $acompanhamento->dias_duracao) {
+                $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
+            }
+
+            $questionario = Questionario::where('acompanhamento_id', $acompanhamento->id);
+
+            $respostas = [];
+
+            if($quest = $questionario->first()) {
+                $questoesIds = $quest->questoes->pluck('id');
+
+                $respostas = QuestaoQuestionarioResposta::whereIn('questionario_questao_id', $questoesIds)
+                    ->select(DB::raw('DATE(created_at) as data_resposta'))
+                    ->groupBy('data_resposta')
+                    ->get()
+                    ->pluck('data_resposta')
+                    ->toArray();
+            }
+
+//            $dataAtual = Carbon::now()->format('Y-m-d');
+
+            foreach ($datasRespostas as $data) {
+                $pendente = true;
+
+                if(in_array($data, $respostas)) {
+                    $pendente = false;
+                }
+
+                $questionario = $questionario->with(['questoes' => function($query) use($data, $respostas, $pendente){
+                    $query->with(['questao' => function($query) {
+                        $query->with('opcoes');
+                    }]);
+
+                    if(!$pendente) {
+                        $query->with('resposta');
+                    }
+                }])->first();
+
+                $questionario->data_resposta     = $data;
+                $questionario->resposta_pendente = $pendente;
+
+                $questionarios[] = $questionario;
+            }
+        }
+
+        return $questionarios;
     }
 
     public function store(AcompanhamentoRequest $request): JsonResponse

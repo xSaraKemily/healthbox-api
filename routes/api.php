@@ -81,6 +81,7 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::delete('acompanhamentos/{id}', [AcompanhamentoController::class, 'destroy']);
     Route::get('acompanhamentos/vinculos-usuarios', [AcompanhamentoController::class, 'usuarioVinculo']);
     Route::get('acompanhamentos', [AcompanhamentoController::class, 'index']);
+    Route::get('acompanhamentos/questionarios', [AcompanhamentoController::class, 'questionariosResponder']);
 
 
     Route::post('questionarios', [QuestionarioController::class, 'store']);
