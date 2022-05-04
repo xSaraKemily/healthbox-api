@@ -116,6 +116,7 @@ class AcompanhamentoController extends Controller
 
         $questionarios = [];
         foreach ($acompanhamentos as $acompanhamento) {
+            $datasRespostas   = [];
             $dataAnterior     = Carbon::parse($acompanhamento->data_inicio);
             $datasRespostas[] = $dataAnterior->format('Y-m-d');
 
