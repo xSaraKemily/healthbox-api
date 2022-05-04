@@ -137,7 +137,7 @@ class AcompanhamentoController extends Controller
             }
 
 //            $dataAtual = Carbon::now()->format('Y-m-d');
-
+dd($datasRespostas);
             foreach ($datasRespostas as $data) {
                 $pendente = true;
 
