@@ -170,8 +170,6 @@ class AcompanhamentoController extends Controller
                     ->toArray();
             }
 
-//            $dataAtual = Carbon::now()->format('Y-m-d');
-
             foreach ($datasRespostas as $data) {
                 $pendente = true;
 
@@ -186,7 +184,9 @@ class AcompanhamentoController extends Controller
                     }]);
 
                     if(!$pendente) {
-                        $query->with('resposta');
+                        $query->with(['resposta' => function($query) use($data){
+                            $query->whereDate('questoes_questionarios_respostas.created_at', $data);
+                        }]);
                     }
                 }])->first();
 
