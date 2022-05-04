@@ -86,7 +86,7 @@ class GraficoController extends Controller
             if(!is_array($remedios)) {
                 $remedios = explode(',', $remedios);
             }
-
+dd($remedios);
             $query = $query->whereIn('remedios.id', $remedios);
         }
 
