@@ -113,7 +113,7 @@ class AcompanhamentoController extends Controller
         }
 
         $acompanhamentos = $acompanhamentos->get();
-
+dd($acompanhamentos);
         $questionarios = [];
         foreach ($acompanhamentos as $acompanhamento) {
             $dataAnterior     = Carbon::parse($acompanhamento->data_inicio);
@@ -137,7 +137,7 @@ class AcompanhamentoController extends Controller
             }
 
 //            $dataAtual = Carbon::now()->format('Y-m-d');
-dd($datasRespostas);
+
             foreach ($datasRespostas as $data) {
                 $pendente = true;
 
