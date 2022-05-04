@@ -178,16 +178,13 @@ class AcompanhamentoController extends Controller
                 }
 
                 $questionario = Questionario::where('acompanhamento_id', $acompanhamento->id)
-                    ->with(['questoes' => function($query) use($data, $respostas, $pendente){
+                    ->with(['questoes' => function($query) use($data){
                     $query->with(['questao' => function($query) {
                         $query->with('opcoes');
                     }]);
-
-                    if(!$pendente) {
-                        $query->with(['resposta' => function($query) use($data){
-                            $query->whereDate('questoes_questionarios_respostas.created_at', $data);
-                        }]);
-                    }
+                    $query->with(['resposta' => function($query) use($data){
+                        $query->whereDate('questoes_questionarios_respostas.created_at', $data);
+                    }]);
                 }])->first();
 
                 $questionario->data_resposta     = $data;
