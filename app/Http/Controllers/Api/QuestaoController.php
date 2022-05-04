@@ -246,9 +246,9 @@ class QuestaoController extends Controller
             }
 
             foreach ($questionario->questoes as $questao) {
-                if($questao->resposta && Carbon::parse($questao->resposta->created_at)->format('Y-m-d') == Carbon::now()->format('Y-m-d')) {
-                    $questao->resposta->forceDelete();
-                }
+                $ids = $questao->respostas->pluck('id');
+
+                QuestaoQuestionarioResposta::whereIn('id', $ids)->whereDate('created_at', Carbon::now())->forceDelete();
             }
 
             $arrId = [];
@@ -258,6 +258,10 @@ class QuestaoController extends Controller
                 $validator = Validator::make($resposta->getAttributes(), $resposta->rules());
                 if($validator->fails()) {
                     return Response::json(['message' => $validator->errors()->all()], 422);
+                }
+
+                if(!QuestaoQuestionario::where('questionario_id', $questionario->id)->where('id', $resposta['questionario_questao_id'])->first()) {
+                    return Response::json(['message' => 'Esta questao não existe neste questionário'], 422);
                 }
 
                 $resposta->save();

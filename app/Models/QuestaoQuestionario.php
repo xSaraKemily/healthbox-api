@@ -43,8 +43,8 @@ class QuestaoQuestionario extends Model
         return $this->hasOne(Questao::class, 'id', 'questao_id');
     }
 
-    public function resposta()
+    public function respostas()
     {
-        return $this->hasOne(QuestaoQuestionarioResposta::class, 'questionario_questao_id', 'id');
+        return $this->hasMany(QuestaoQuestionarioResposta::class, 'questionario_questao_id', 'id');
     }
 }

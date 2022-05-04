@@ -103,7 +103,10 @@ class QuestionarioController extends Controller
 
             if ($questionario->questoes) {
                 foreach ($questionario->questoes as $questao) {
-                    $questao->resposta->delete();
+                    foreach ($questao->respostas as $resp) {
+                        $resp->delete();
+                    }
+
                     $questao->delete();
                 }
             }

@@ -41,7 +41,7 @@ class AcompanhamentoController extends Controller
                     $query->with(['questao' => function($query) {
                         $query->with('opcoes');
                     }])
-                    ->with(['resposta' => function($query) {
+                    ->with(['respostas' => function($query) {
                         $query->whereDate('questoes_questionarios_respostas.created_at', Carbon::now()->format('Y-m-d'));
                     }]);
                 }]);
@@ -114,7 +114,7 @@ class AcompanhamentoController extends Controller
                     $query->with(['questao' => function($query) {
                         $query->with('opcoes');
                     }])
-                        ->with(['resposta' => function($query) {
+                        ->with(['respostas' => function($query) {
                             $query->whereDate('questoes_questionarios_respostas.created_at', Carbon::now()->format('Y-m-d'));
                         }]);
                 }]);
@@ -182,7 +182,7 @@ class AcompanhamentoController extends Controller
                     $query->with(['questao' => function($query) {
                         $query->with('opcoes');
                     }]);
-                    $query->with(['resposta' => function($query) use($data){
+                    $query->with(['respostas' => function($query) use($data){
                         $query->whereDate('questoes_questionarios_respostas.created_at', $data);
                     }]);
                 }])->first();
@@ -284,7 +284,10 @@ class AcompanhamentoController extends Controller
                 $acompanhamento->tratamento->delete();
 
                 foreach ($acompanhamento->questionario->questoes as $questao) {
-                    $questao->resposta->delete();
+                    foreach ($questao->respostas as $resp) {
+                        $resp->delete();
+                    }
+
                     $questao->delete();
                 }
             }

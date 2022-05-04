@@ -24,7 +24,7 @@ class Questao extends Model
 
     public function getUtilizadoAttribute()
     {
-       $questoes = QuestaoQuestionario::whereHas('resposta')->pluck('questao_id')->toArray();
+       $questoes = QuestaoQuestionario::whereHas('respostas')->pluck('questao_id')->toArray();
 
        if(in_array($this->id, $questoes)) {
            return true;
