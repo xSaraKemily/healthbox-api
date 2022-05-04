@@ -96,7 +96,7 @@ class AcompanhamentoController extends Controller
 
     public function show($id)
     {
-        $acompanhamento = Acompanhamento::find($id)
+        $acompanhamento = Acompanhamento::where('id', $id)
             ->with(['medico' => function($query) {
                 $query->with('crms');
             }])
