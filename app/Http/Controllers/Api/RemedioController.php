@@ -63,7 +63,7 @@ class RemedioController extends Controller
     }
 
     /**
-     * Traz todos os medicamentos usados
+     * Traz todos os medicamentos usados nas opinioes
      * Não tem paginacao
      **/
     public function getUsed()
