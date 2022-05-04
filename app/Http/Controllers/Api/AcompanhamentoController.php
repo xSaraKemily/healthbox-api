@@ -58,7 +58,8 @@ class AcompanhamentoController extends Controller
         $acompanhamentos = $acompanhamentos->get();
 
         foreach ($acompanhamentos as $acompanhamento) {
-            $dataAnterior   = Carbon::parse($acompanhamento->data_inicio);
+            $datasRespostas   = [];
+            $dataAnterior     = Carbon::parse($acompanhamento->data_inicio);
             $datasRespostas[] = $dataAnterior->format('Y-m-d');
 
             while(count($datasRespostas) < $acompanhamento->dias_duracao) {
