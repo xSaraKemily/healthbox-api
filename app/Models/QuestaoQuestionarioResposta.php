@@ -27,10 +27,6 @@ class QuestaoQuestionarioResposta extends Model
                 'nullable',
                 'required_without:resposta_descritiva',
                 'exists:opcoes_questoes,id',
-                Rule::unique('questoes_questionarios_respostas')->where(function ($query) {
-                    return $query->where('opcao_id', $this->opcao_id)
-                        ->where('questionario_questao_id', $this->questionario_questao_id);
-                })->ignore($this->id)
             ],
             'questionario_questao_id' => 'exists:questoes_questionarios,id',
         ];
