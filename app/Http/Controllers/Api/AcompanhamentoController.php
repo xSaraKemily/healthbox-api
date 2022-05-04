@@ -40,6 +40,9 @@ class AcompanhamentoController extends Controller
                 $query->with(['questoes' => function($query) {
                     $query->with(['questao' => function($query) {
                         $query->with('opcoes');
+                    }])
+                    ->with(['resposta' => function($query) {
+                        $query->whereDate('questoes_questionarios_respostas.created_at', Carbon::now()->format('Y-m-d'));
                     }]);
                 }]);
             }]);
