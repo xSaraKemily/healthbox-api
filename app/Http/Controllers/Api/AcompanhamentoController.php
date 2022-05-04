@@ -94,6 +94,35 @@ class AcompanhamentoController extends Controller
        return $acompanhamentos;
     }
 
+    public function show($id)
+    {
+        $acompanhamento = Acompanhamento::find($id)
+            ->with(['medico' => function($query) {
+                $query->with('crms');
+            }])
+            ->with(['paciente' => function($query) {
+                $query->with(['caracteristica']);
+            }])
+            ->with(['tratamento' => function($query) {
+                $query->with(['remedios' => function($query) {
+                    $query->with('remedio');
+                }]);
+            }])
+            ->with(['questionario' => function($query) {
+                $query->with(['questoes' => function($query) {
+                    $query->with(['questao' => function($query) {
+                        $query->with('opcoes');
+                    }])
+                        ->with(['resposta' => function($query) {
+                            $query->whereDate('questoes_questionarios_respostas.created_at', Carbon::now()->format('Y-m-d'));
+                        }]);
+                }]);
+            }])
+            ->first();
+
+        return $acompanhamento;
+    }
+
     /**
      * @param Request $request
      * @return mixed

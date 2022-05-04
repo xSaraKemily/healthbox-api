@@ -79,6 +79,7 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::post('acompanhamentos', [AcompanhamentoController::class, 'store']);
     Route::put('acompanhamentos/{id}', [AcompanhamentoController::class, 'update']);
     Route::delete('acompanhamentos/{id}', [AcompanhamentoController::class, 'destroy']);
+    Route::get('acompanhamentos/{id}', [AcompanhamentoController::class, 'show']);
     Route::get('acompanhamentos/vinculos-usuarios', [AcompanhamentoController::class, 'usuarioVinculo']);
     Route::get('acompanhamentos', [AcompanhamentoController::class, 'index']);
     Route::get('acompanhamentos/questionarios', [AcompanhamentoController::class, 'questionariosResponder']);
