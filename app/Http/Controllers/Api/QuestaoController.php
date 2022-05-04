@@ -180,7 +180,7 @@ class QuestaoController extends Controller
     {
         DB::beginTransaction();
         try {
-            QuestaoQuestionario::where('questionario_id', $request->vinculos[0]['questionario_id'])->forceDelete();
+            QuestaoQuestionario::where('questionario_id', $request->vinculos[0]['questionario_id'])->whereNotIn('questao_id', [1,2])->forceDelete();
 
             $arrId = [];
             foreach ($request->vinculos as $vinculo) {
