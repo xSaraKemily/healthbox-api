@@ -25,6 +25,7 @@ class AcompanhamentoController extends Controller
         $columns = Functions::getColumnsWhere();
 
         $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id)
+            ->whereNull('acompanhamentos.deleted_at')
             ->with(['medico' => function($query) {
                 $query->with('crms');
             }])
