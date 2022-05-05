@@ -277,7 +277,6 @@ class AcompanhamentoController extends Controller
             }
 
             if ($acompanhamento->tratamento) {
-
                 foreach ($acompanhamento->remedios as $rem) {
                     $rem->delete();
                 }
