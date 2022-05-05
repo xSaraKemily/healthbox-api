@@ -277,15 +277,19 @@ class AcompanhamentoController extends Controller
             }
 
             if ($acompanhamento->tratamento) {
-                foreach ($acompanhamento->remedios as $rem) {
-                    $rem->delete();
+                if($acompanhamento->remedios) {
+                    foreach ($acompanhamento->remedios as $rem) {
+                        $rem->delete();
+                    }
                 }
 
                 $acompanhamento->tratamento->delete();
 
                 foreach ($acompanhamento->questionario->questoes as $questao) {
-                    foreach ($questao->respostas as $resp) {
-                        $resp->delete();
+                    if($questao->respostas) {
+                        foreach ($questao->respostas as $resp) {
+                            $resp->delete();
+                        }
                     }
 
                     $questao->delete();
