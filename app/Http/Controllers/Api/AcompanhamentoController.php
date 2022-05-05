@@ -297,6 +297,8 @@ class AcompanhamentoController extends Controller
                 }
             }
 
+            $acompanhamento->delete();
+
         } catch (Exception $e) {
             Log::error('Erro ao deletar acompanhamento ' . $e);
 
