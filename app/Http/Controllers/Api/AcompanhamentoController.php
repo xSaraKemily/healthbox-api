@@ -277,9 +277,12 @@ class AcompanhamentoController extends Controller
             }
 
             if ($acompanhamento->tratamento) {
-                if ($acompanhamento->tratamento->remedios) {
-                    $acompanhamento->tratamento->remedios->delete();
+
+                foreach ($acompanhamento->remedios as $rem) {
+                    $rem->delete();
                 }
+
+                $acompanhamento->tratamento->remedios->delete();
 
                 $acompanhamento->tratamento->delete();
 
@@ -293,12 +296,12 @@ class AcompanhamentoController extends Controller
             }
 
         } catch (Exception $e) {
-            Log::error('Erro ao deletar CRM ' . $e);
+            Log::error('Erro ao deletar acompanhamento ' . $e);
 
-            return Response::json(['message' => 'Erro ao deletar especializaação'], 500);
+            return Response::json(['message' => 'Erro ao deletar acompanhamento'], 500);
         }
 
-        return Response::json(['message' => 'Especializaação deletado com sucesso.']);
+        return Response::json(['message' => 'Acompanhamento deletado com sucesso.']);
     }
 
     /**
