@@ -281,8 +281,6 @@ class AcompanhamentoController extends Controller
                     $rem->delete();
                 }
 
-                $acompanhamento->tratamento->remedios->delete();
-
                 $acompanhamento->tratamento->delete();
 
                 foreach ($acompanhamento->questionario->questoes as $questao) {
