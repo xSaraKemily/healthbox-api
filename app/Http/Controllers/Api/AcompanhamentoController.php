@@ -82,7 +82,7 @@ class AcompanhamentoController extends Controller
 
             $dataAtual = Carbon::now()->format('Y-m-d');
 
-            if(in_array($dataAtual, $datasRespostas) && (!$ultimaResposta || ($ultimaResposta && Carbon::now($ultimaResposta->created_at)->format('Y-m-d') < $dataAtual))) {
+            if(in_array($dataAtual, $datasRespostas) && (!$ultimaResposta || ($ultimaResposta && Carbon::now($ultimaResposta->created_at)->subHours(3)->format('Y-m-d') < $dataAtual))) {
                 $acompanhamento->resposta_pendente = true;
             } else {
                 $acompanhamento->resposta_pendente = false;
@@ -342,7 +342,7 @@ class AcompanhamentoController extends Controller
 
             $dataAtual = Carbon::now()->format('Y-m-d');
 
-            if(in_array($dataAtual, $datasRespostas) && (!$ultimaResposta || ($ultimaResposta && Carbon::now($ultimaResposta->created_at)->format('Y-m-d') < $dataAtual))) {
+            if(in_array($dataAtual, $datasRespostas) && (!$ultimaResposta || ($ultimaResposta && Carbon::now($ultimaResposta->created_at)->subHours(3)->format('Y-m-d') < $dataAtual))) {
                 $acompanhamento->$colunaWith->resposta_pendente = true;
             } else {
                 $acompanhamento->$colunaWith->resposta_pendente = false;
