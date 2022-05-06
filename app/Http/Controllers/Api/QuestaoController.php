@@ -184,6 +184,10 @@ class QuestaoController extends Controller
 
             $arrId = [];
             foreach ($request->vinculos as $vinculo) {
+                if(in_array($vinculo['questao_id'], [1,2])) {
+                    continue;
+                }
+
                 $vinculo = new QuestaoQuestionario($vinculo);
 
                 $validator = Validator::make($vinculo->getAttributes(), $vinculo->rules());
