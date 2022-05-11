@@ -191,7 +191,7 @@ class GraficoController extends Controller
             ->join('questionarios', 'questionarios.acompanhamento_id', 'acompanhamentos.id')
             ->join('questoes_questionarios as qq', 'qq.questionario_id', 'questionarios.id')
             ->join('questoes_questionarios_respostas as qr', 'qr.questionario_questao_id', 'qq.id')
-            ->whereIn('qq.questao_id', $idPergunta)
+            ->where('qq.questao_id', $idPergunta)
             ->select('remedios.nome as remedio', 'qr.opcao_id','acompanhamentos.id', DB::Raw("DATE(qr.created_at) as data_resposta"), 'qq.questao_id');
 
         if($filtrarExercicio) {
