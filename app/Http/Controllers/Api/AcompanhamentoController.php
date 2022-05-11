@@ -324,6 +324,7 @@ class AcompanhamentoController extends Controller
         foreach ($acompanhamentos as $acompanhamento) {
             $datasRespostas = [];
             $dataAnterior   = Carbon::parse($acompanhamento->data_inicio);
+            $datasRespostas[] = $dataAnterior->format('Y-m-d');
             while(count($datasRespostas) < $acompanhamento->dias_duracao) {
                 $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
             }
