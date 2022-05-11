@@ -130,32 +130,24 @@ class GraficoController extends Controller
      */
     public function remedioMelhoraSintoma(Request $request)
     {
+        $graficoExercicio = $request->filled('grafico_exercicio') && $request->grafico_exercicio;
+
         if(!$request->filled('remedios')) {
             return Response::json([]);
         }
 
-        $query = Acompanhamento::join('tratamentos', 'tratamentos.acompanhamento_id', 'acompanhamentos.id')
-            ->join('remedios_tratamentos as rt', 'rt.tratamento_id', 'tratamentos.id')
-            ->join('remedios', 'remedios.id', 'rt.remedio_id')
-            ->join('questionarios', 'questionarios.acompanhamento_id', 'acompanhamentos.id')
-            ->join('questoes_questionarios as qq', 'qq.questionario_id', 'questionarios.id')
-            ->join('questoes_questionarios_respostas as qr', 'qr.questionario_questao_id', 'qq.id')
-            ->where('qq.questao_id', 1)
-            ->select('remedios.nome as remedio', 'qr.opcao_id','acompanhamentos.id', DB::Raw("DATE(qr.created_at) as data_resposta"));
+       $query = self::getAcompanhamentosQuery($request);
 
-        if($request->filled('remedios')) {
-            $remedios = $request->remedios;
-            if(!is_array($remedios)) {
-                $remedios = explode(',', $remedios);
-            }
-
-            $query = $query->whereIn('remedios.id', $remedios);
+        if($graficoExercicio) {
+            $acompanhamentosComExercicio = self::getAcompanhamentosQuery($request)->pluck('id')->toArray();
         }
-
-        $query = $query->get();
 
         $remedios = [];
         foreach ($query as $acompanhamento) {
+            if($graficoExercicio && !in_array($acompanhamento->id, $acompanhamentosComExercicio)) {
+                continue;
+            }
+
             if(!isset($remedios[$acompanhamento->remedio])) {
                 $remedios[$acompanhamento->remedio] = [
                     'melhorou' => 0,
@@ -187,5 +179,34 @@ class GraficoController extends Controller
         }
 
         return Response::json($data);
+    }
+
+    public static function getAcompanhamentosQuery(Request $request, $filtrarExercicio = false)
+    {
+        $idPergunta = $filtrarExercicio ? 2 : 1;
+
+        $query = Acompanhamento::join('tratamentos', 'tratamentos.acompanhamento_id', 'acompanhamentos.id')
+            ->join('remedios_tratamentos as rt', 'rt.tratamento_id', 'tratamentos.id')
+            ->join('remedios', 'remedios.id', 'rt.remedio_id')
+            ->join('questionarios', 'questionarios.acompanhamento_id', 'acompanhamentos.id')
+            ->join('questoes_questionarios as qq', 'qq.questionario_id', 'questionarios.id')
+            ->join('questoes_questionarios_respostas as qr', 'qr.questionario_questao_id', 'qq.id')
+            ->whereIn('qq.questao_id', $idPergunta)
+            ->select('remedios.nome as remedio', 'qr.opcao_id','acompanhamentos.id', DB::Raw("DATE(qr.created_at) as data_resposta"), 'qq.questao_id');
+
+        if($filtrarExercicio) {
+            $query = $query->where('qr.opcao_id', 4);
+        }
+
+        if($request->filled('remedios')) {
+            $remedios = $request->remedios;
+            if(!is_array($remedios)) {
+                $remedios = explode(',', $remedios);
+            }
+
+            $query = $query->whereIn('remedios.id', $remedios);
+        }
+
+        return $query->get();
     }
 }
