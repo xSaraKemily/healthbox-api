@@ -100,8 +100,7 @@ class AcompanhamentoController extends Controller
     {
         $acompanhamento = Acompanhamento::where('id', $id)
             ->with(['medico' => function($query) {
-                $query->with(['crms'])
-                    ->with(['caracteristica']);
+                $query->with('crms');
             }])
             ->with(['paciente' => function($query) {
                 $query->with(['caracteristica']);
@@ -122,6 +121,8 @@ class AcompanhamentoController extends Controller
                 }]);
             }])
             ->first();
+
+        $acompanhamento->medico->caracteristica;
 
         return $acompanhamento;
     }
