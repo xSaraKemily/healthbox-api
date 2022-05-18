@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Acompanhamento;
 use App\Models\QuestaoQuestionario;
+use App\Utils\Functions;
 use Illuminate\Http\Request;
 use App\Models\RemedioTratamento;
 use App\Http\Controllers\Controller;
@@ -185,6 +186,8 @@ class GraficoController extends Controller
     {
         $idPergunta = $filtrarExercicio ? 2 : 1;
 
+        $columns = Functions::getColumnsWhere();
+
         $query = Acompanhamento::join('tratamentos', 'tratamentos.acompanhamento_id', 'acompanhamentos.id')
             ->join('remedios_tratamentos as rt', 'rt.tratamento_id', 'tratamentos.id')
             ->join('remedios', 'remedios.id', 'rt.remedio_id')
@@ -192,6 +195,7 @@ class GraficoController extends Controller
             ->join('questoes_questionarios as qq', 'qq.questionario_id', 'questionarios.id')
             ->join('questoes_questionarios_respostas as qr', 'qr.questionario_questao_id', 'qq.id')
             ->where('qq.questao_id', $idPergunta)
+            ->where('acompanhamentos.'.$columns->colunaUser, auth()->user()->id)
             ->select('remedios.nome as remedio', 'qr.opcao_id','acompanhamentos.id', DB::Raw("DATE(qr.created_at) as data_resposta"), 'qq.questao_id');
 
         if($filtrarExercicio) {

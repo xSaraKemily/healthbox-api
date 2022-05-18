@@ -11,6 +11,7 @@ use App\Models\MedicoCrm;
 use App\Models\MedicoCrmEspecializacao;
 use App\Models\Remedio;
 use App\Models\User;
+use App\Utils\Functions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -66,12 +67,21 @@ class RemedioController extends Controller
      * Traz todos os medicamentos usados nas opinioes
      * Não tem paginacao
      **/
-    public function getUsed()
+    public function getUsed($tipo = 'opinioes')
     {
+        $columns = Functions::getColumnsWhere();
+
         $remedios = Remedio::join('remedios_tratamentos as rt', 'rt.remedio_id', 'remedios.id')
-            ->join('tratamentos', 'tratamentos.id', 'rt.tratamento_id')
-            ->join('opinioes', 'opinioes.id', 'tratamentos.opiniao_id')
-            ->groupBy('remedios.id', 'remedios.nome', 'remedios.fabricante')
+            ->join('tratamentos', 'tratamentos.id', 'rt.tratamento_id');
+
+        if ($tipo == 'acompanhamentos') {
+            $remedios = $remedios->join('acompanhamentos', 'acompanhamentos.id', 'tratamentos.acompanhamento_id')
+                ->where('acompanhamentos.'.$columns->colunaUser, auth()->user()->id);
+        } else {
+            $remedios = $remedios->join('opinioes', 'opinioes.id', 'tratamentos.opiniao_id');
+        }
+
+        $remedios = $remedios->groupBy('remedios.id', 'remedios.nome', 'remedios.fabricante')
             ->select('remedios.*')
             ->get();
 
