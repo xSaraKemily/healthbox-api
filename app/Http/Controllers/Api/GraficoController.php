@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Acompanhamento;
 use App\Models\QuestaoQuestionario;
+use App\Models\QuestaoQuestionarioResposta;
+use App\Models\Questionario;
 use App\Utils\Functions;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\RemedioTratamento;
 use App\Http\Controllers\Controller;
@@ -178,6 +181,72 @@ class GraficoController extends Controller
                 'eixoX'          => $key
             ];
         }
+
+        return Response::json($data);
+    }
+
+    /**
+     * questionarios respondidos x paciente.
+     * grafico pie
+     */
+    public function respostaPaciente(Request $request)
+    {
+        if(auth()->user()->tipo == 'M' && !$request->filled('paciente_id')) {
+            return Response::json('Quando o usuário for médico, o paciente_id é obrigatório', 422);
+        }
+
+        $columns = Functions::getColumnsWhere();
+
+        $acompanhamentos = Acompanhamento::where($columns->colunaUser, auth()->user()->id);
+
+        if(auth()->user()->tipo == 'M') {
+           $acompanhamentos = $acompanhamentos->where('paciente_id', $request->paciente_id);
+        }
+
+        $acompanhamentos = $acompanhamentos->get();
+
+        $pendente   = 0;
+        $respondida = 0;
+        foreach ($acompanhamentos as $acompanhamento) {
+            $datasRespostas   = [];
+            $dataAnterior     = Carbon::parse($acompanhamento->data_inicio);
+            $datasRespostas[] = $dataAnterior->format('Y-m-d');
+
+            while(count($datasRespostas) < $acompanhamento->dias_duracao) {
+                $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
+            }
+
+            $respostas = [];
+
+            if($quest = Questionario::where('acompanhamento_id', $acompanhamento->id)->first()) {
+                $questoesIds = $quest->questoes->pluck('id');
+
+                $respostas = QuestaoQuestionarioResposta::whereIn('questionario_questao_id', $questoesIds)
+                    ->select(DB::raw('DATE(created_at) as data_resposta'))
+                    ->groupBy('data_resposta')
+                    ->get()
+                    ->pluck('data_resposta')
+                    ->toArray();
+            }
+
+            foreach ($datasRespostas as $data) {
+
+                if(in_array($data, $respostas)) {
+                    $respondida++;
+                } else {
+                    $pendente++;
+                }
+            }
+        }
+
+        $data = [];
+        $total = $respondida + $pendente;
+
+        $data[] = [
+            'id'          => 1, //id ficticio para colocar cor no design do app
+            'pendentes'   => round(($pendente * 100) / $total, 2),
+            'respondidos' => round(($respondida * 100) / $total, 2),
+        ];
 
         return Response::json($data);
     }

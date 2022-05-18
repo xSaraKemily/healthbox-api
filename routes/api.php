@@ -69,6 +69,7 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::get('graficos/paciente-remedio', [GraficoController::class, 'pacienteRemedio']);
     Route::get('graficos/remedio-eficacia', [GraficoController::class, 'remedioEficacia']);
     Route::get('graficos/remedio-melhora', [GraficoController::class, 'remedioMelhoraSintoma']);
+    Route::get('graficos/paciente-resposta', [GraficoController::class, 'respostaPaciente']);
 
     Route::get('solicitacoes-vinculos', [SolicitacaoVinculoController::class, 'index']);
     Route::post('solicitacoes-vinculos', [SolicitacaoVinculoController::class, 'store']);
