@@ -27,6 +27,7 @@ class User extends Authenticatable  implements JWTSubject
         'sexo',
         'telefone',
         'foto_path',
+        'notificacao_token',
         'ativo',
     ];
 
@@ -77,15 +78,16 @@ class User extends Authenticatable  implements JWTSubject
     public function rules()
     {
         return [
-            'name'            => 'required|max:255',
-            'tipo'            => 'required|in:M,P',
-            'email'           => 'required|unique:users',
-            'password'        => 'required',
-            'data_nascimento' => 'nullable|date',
-            'telefone'        => 'nullable|max:30|min:8',
-            'foto_path'       => 'nullable',
-            'sexo'            => 'required|in:F,M,O',
-            'ativo'           => 'required|in:0,1',
+            'name'               => 'required|max:255',
+            'tipo'               => 'required|in:M,P',
+            'email'              => 'required|unique:users',
+            'password'           => 'required',
+            'data_nascimento'    => 'nullable|date',
+            'telefone'           => 'nullable|max:30|min:8',
+            'foto_path'          => 'nullable',
+            'notificacao_token'  => 'nullable',
+            'sexo'               => 'required|in:F,M,O',
+            'ativo'              => 'required|in:0,1',
         ];
     }
 
