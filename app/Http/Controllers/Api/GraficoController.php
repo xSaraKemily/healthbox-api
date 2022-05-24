@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\RemedioTratamento;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 
@@ -249,6 +250,104 @@ class GraficoController extends Controller
         ];
 
         return Response::json($data);
+    }
+
+    /**
+     * Remédio x eficaz x ineficaz
+     * grafico de barra horizontal dupla
+     */
+    public function acompanhamentoOpiniaoEficacia(Request $request)
+    {
+        $acompanhamentos = Acompanhamento::query();
+
+        if($request->medico_id) {
+            $medicosId = $request->medico_id;
+            if(!is_array($medicosId)) {
+                $medicosId = explode(',', $medicosId);
+            }
+        }
+
+        if($request->paciente_id) {
+            $pacientesId = $request->paciente_id;
+            if(!is_array($pacientesId)) {
+                $pacientesId = explode(',', $pacientesId);
+            }
+        }
+
+        $medicoId   = Auth::user()->tipo == 'M' ? [Auth::user()->id]  : null;
+        $pacienteId = Auth::user()->tipo == 'P' ? [Auth::user()->id]  : null;
+
+        $whereMedico   = isset($medicosId) ? $medicosId : $medicoId;
+        $wherePaciente = isset($pacientesId) ? $pacientesId : $pacienteId;
+
+        if($whereMedico) {
+            $acompanhamentos = $acompanhamentos->whereIn('medico_id', $whereMedico);
+        }
+
+        if($wherePaciente) {
+            $acompanhamentos = $acompanhamentos->whereIn('paciente_id', $wherePaciente);
+        }
+
+        $acompanhamentos = $acompanhamentos->get();
+
+        $data = [];
+        foreach ($acompanhamentos as $acompanhamento) {
+            if(!$acompanhamento->tratamento) {
+                continue;
+            }
+
+            if(!$acompanhamento->tratamento->remedios) {
+                continue;
+            }
+
+            $remedios = $acompanhamento->tratamento->remedios->pluck('remedio_id');
+
+            $query = RemedioTratamento::select('remedios_tratamentos.tratamento_id', 'opinioes.eficaz', 'opinioes.id as opiniaoId')
+                ->join('tratamentos', 'tratamentos.id', 'remedios_tratamentos.tratamento_id')
+                ->join('opinioes', 'opinioes.id', 'tratamentos.opiniao_id')
+                ->join('remedios', 'remedios.id', 'remedios_tratamentos.remedio_id')
+                ->whereIn('remedios.id', $remedios)
+                ->groupBy('opinioes.id')
+                ->get();
+
+            foreach ($query as $opiniao) {
+                $remediosOpiniao = $opiniao->tratamento->remedios->pluck('remedio_id');
+
+                $count = 0;
+                foreach ($remediosOpiniao as $remOp) {
+                    if(in_array($remOp, $remedios->toArray())) {
+                        $count++;
+                    }
+                }
+
+                if(count($remediosOpiniao) <> count($remedios) || $count <> count($remedios)){
+                    continue 2;
+                }
+
+                $data[] = (object)['opiniao_id' => $opiniao->opiniaoId, 'eficaz' => $opiniao->eficaz];
+            }
+        }
+
+        $totalEficaz = 0;
+        $totalIneficaz = 0;
+        foreach ($data as  $dt) {
+            switch ($dt->eficaz) {
+                case 1: $totalEficaz++;
+                    break;
+                case 0: $totalIneficaz++;
+                    break;
+            }
+        }
+
+        $total = $totalEficaz + $totalIneficaz;
+
+        $dtGrafico[] = [
+            'id'         => 1, //id ficticio para colocar cor no design do app
+            'eficaz'     => round(($totalEficaz * 100) / $total, 2),
+            'ineficaz'   => round(($totalIneficaz * 100) / $total, 2),
+        ];
+
+        return Response::json($dtGrafico);
     }
 
     public static function getAcompanhamentosQuery(Request $request, $filtrarExercicio = false)
