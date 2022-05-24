@@ -269,7 +269,6 @@ class AcompanhamentoController extends Controller
         return Response::json(['message' => 'Acompanhamento atualizado com sucesso']);
     }
 
-    //todo: testar
     public function destroy($id)
     {
         try {
