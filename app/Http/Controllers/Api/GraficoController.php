@@ -206,8 +206,11 @@ class GraficoController extends Controller
 
         $acompanhamentos = $acompanhamentos->get();
 
+        $dataAtual = Carbon::now()->format('Y-m-d');
+
         $pendente   = 0;
         $respondida = 0;
+        $naoRespondido = 0;
         foreach ($acompanhamentos as $acompanhamento) {
             $datasRespostas   = [];
             $dataAnterior     = Carbon::parse($acompanhamento->data_inicio);
@@ -231,9 +234,10 @@ class GraficoController extends Controller
             }
 
             foreach ($datasRespostas as $data) {
-
                 if(in_array($data, $respostas)) {
                     $respondida++;
+                } else if($data < $dataAtual){
+                    $naoRespondido++;
                 } else {
                     $pendente++;
                 }
@@ -241,12 +245,13 @@ class GraficoController extends Controller
         }
 
         $data = [];
-        $total = $respondida + $pendente;
+        $total = $respondida + $pendente + $naoRespondido;
 
         $data[] = [
-            'id'          => 1, //id ficticio para colocar cor no design do app
-            'pendentes'   => round(($pendente * 100) / $total, 2),
-            'respondidos' => round(($respondida * 100) / $total, 2),
+            'id'              => 1, //id ficticio para colocar cor no design do app
+            'pendentes'       => round(($pendente * 100) / $total, 2),
+            'respondidos'     => round(($respondida * 100) / $total, 2),
+            'nao_respondidos' => round(($naoRespondido * 100) / $total, 2),
         ];
 
         return Response::json($data);
