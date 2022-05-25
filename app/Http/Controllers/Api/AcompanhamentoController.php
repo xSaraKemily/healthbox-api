@@ -94,37 +94,23 @@ class AcompanhamentoController extends Controller
 
             //PROGRESSO
 
-            $respostas = null;
-            if($questionario) {
-                $questoesIds = $questionario->questoes->pluck('id');
-
-                $respostas = QuestaoQuestionarioResposta::whereIn('questionario_questao_id', $questoesIds)
-                    ->select('created_at')
-                    ->groupBy('created_at')
-                    ->get()
-                    ->pluck('created_at')
-                    ->toArray();
-            }
-
             $progresso = 0;
-            $respondido = 0;
-            if($respostas) {
-                $datasRespostas = [];
-                $dataAnterior   = Carbon::parse($acompanhamento->data_inicio);
-                $datasRespostas[] = $dataAnterior->format('Y-m-d');
+            $passou = 0;
+            $datasRespostas = [];
+            $dataAnterior   = Carbon::parse($acompanhamento->data_inicio);
+            $datasRespostas[] = $dataAnterior->format('Y-m-d');
 
-                while(count($datasRespostas) < $acompanhamento->dias_duracao) {
-                    $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
-                }
-
-                foreach ($respostas as $resp) {
-                    if (in_array(Carbon::parse($resp)->format('Y-m-d'),$datasRespostas)){
-                        $respondido++;
-                    }
-                }
-
-                $progresso = round(($respondido * 100) / count($datasRespostas), 2);
+            while(count($datasRespostas) < $acompanhamento->dias_duracao) {
+                $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
             }
+
+            foreach ($datasRespostas as $resp) {
+                if (Carbon::parse($resp)->format('Y-m-d') < Carbon::now()->format('Y-m-d')){
+                    $passou++;
+                }
+            }
+
+            $progresso = round(($passou * 100) / count($datasRespostas), 2);
 
             $acompanhamento->porcentagem_progresso = $progresso;
         }
@@ -164,39 +150,23 @@ class AcompanhamentoController extends Controller
 
         $acompanhamento->medico->caracteristica;
 
-        $questionario = Questionario::where('acompanhamento_id', $acompanhamento->id)->first();
-
-        $respostas = null;
-        if($questionario) {
-            $questoesIds = $questionario->questoes->pluck('id');
-
-            $respostas = QuestaoQuestionarioResposta::whereIn('questionario_questao_id', $questoesIds)
-                ->select('created_at')
-                ->groupBy('created_at')
-                ->get()
-                ->pluck('created_at')
-                ->toArray();
-        }
-
         $progresso = 0;
-        $respondido = 0;
-        if($respostas) {
-            $datasRespostas = [];
-            $dataAnterior   = Carbon::parse($acompanhamento->data_inicio);
-            $datasRespostas[] = $dataAnterior->format('Y-m-d');
+        $passou = 0;
+        $datasRespostas = [];
+        $dataAnterior   = Carbon::parse($acompanhamento->data_inicio);
+        $datasRespostas[] = $dataAnterior->format('Y-m-d');
 
-            while(count($datasRespostas) < $acompanhamento->dias_duracao) {
-                $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
-            }
-
-            foreach ($respostas as $resp) {
-                if (in_array(Carbon::parse($resp)->format('Y-m-d'),$datasRespostas)){
-                    $respondido++;
-                }
-            }
-
-            $progresso = round(($respondido * 100) / count($datasRespostas), 2);
+        while(count($datasRespostas) < $acompanhamento->dias_duracao) {
+            $datasRespostas[] =  $dataAnterior->addDays($acompanhamento->quantidade_periodicidade)->format('Y-m-d');
         }
+
+        foreach ($datasRespostas as $resp) {
+            if (Carbon::parse($resp)->format('Y-m-d') < Carbon::now()->format('Y-m-d')){
+                $passou++;
+            }
+        }
+
+        $progresso = round(($passou * 100) / count($datasRespostas), 2);
 
         $acompanhamento->porcentagem_progresso = $progresso;
 
