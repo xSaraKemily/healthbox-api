@@ -43,7 +43,7 @@ class AcompanhamentoController extends Controller
                         $query->with('opcoes');
                     }])
                     ->with(['respostas' => function($query) {
-                        $query->whereDate('questoes_questionarios_respostas.created_at', Carbon::now()->format('Y-m-d'));
+                        $query->whereDate('questoes_questionarios_respostas.created_at', Carbon::now()->subHours(3)->format('Y-m-d'));
                     }]);
                 }]);
             }]);
@@ -80,7 +80,7 @@ class AcompanhamentoController extends Controller
                     ->first();
             }
 
-            $dataAtual = Carbon::now()->format('Y-m-d');
+            $dataAtual = Carbon::now()->subHours(3)->format('Y-m-d');
 
             if(in_array($dataAtual, $datasRespostas) && (!$ultimaResposta || ($ultimaResposta && Carbon::now($ultimaResposta->created_at)->subHours(3)->format('Y-m-d') < $dataAtual))) {
                 $acompanhamento->resposta_pendente = true;
@@ -105,7 +105,7 @@ class AcompanhamentoController extends Controller
             }
 
             foreach ($datasRespostas as $resp) {
-                if (Carbon::parse($resp)->format('Y-m-d') < Carbon::now()->format('Y-m-d')){
+                if (Carbon::parse($resp)->format('Y-m-d') < Carbon::now()->subHours(3)->format('Y-m-d')){
                     $passou++;
                 }
             }
@@ -138,7 +138,7 @@ class AcompanhamentoController extends Controller
                         $query->with('opcoes');
                     }])
                         ->with(['respostas' => function($query) {
-                            $query->whereDate('questoes_questionarios_respostas.created_at', Carbon::now()->format('Y-m-d'));
+                            $query->whereDate('questoes_questionarios_respostas.created_at', Carbon::now()->subHours(3)->format('Y-m-d'));
                         }]);
                 }]);
             }])
@@ -161,7 +161,7 @@ class AcompanhamentoController extends Controller
         }
 
         foreach ($datasRespostas as $resp) {
-            if (Carbon::parse($resp)->format('Y-m-d') < Carbon::now()->format('Y-m-d')){
+            if (Carbon::parse($resp)->format('Y-m-d') < Carbon::now()->subHours(3)->format('Y-m-d')){
                 $passou++;
             }
         }
@@ -212,11 +212,15 @@ class AcompanhamentoController extends Controller
                 $questoesIds = $quest->questoes->pluck('id');
 
                 $respostas = QuestaoQuestionarioResposta::whereIn('questionario_questao_id', $questoesIds)
-                    ->select(DB::raw('DATE(created_at) as data_resposta'))
-                    ->groupBy('data_resposta')
+                    ->select('created_at')
+                    ->groupBy('created_at')
                     ->get()
-                    ->pluck('data_resposta')
+                    ->pluck('created_at')
                     ->toArray();
+
+                foreach ($respostas as $key => $resp)  {
+                    $respostas[$key] = Carbon::parse($resp)->subHours(3)->format('Y-m-d');
+                }
             }
 
             foreach ($datasRespostas as $data) {
@@ -389,7 +393,7 @@ class AcompanhamentoController extends Controller
                     ->first();
             }
 
-            $dataAtual = Carbon::now()->format('Y-m-d');
+            $dataAtual = Carbon::now()->subHours(3)->format('Y-m-d');
 
             if(in_array($dataAtual, $datasRespostas) && (!$ultimaResposta || ($ultimaResposta && Carbon::now($ultimaResposta->created_at)->subHours(3)->format('Y-m-d') < $dataAtual))) {
                 $acompanhamento->$colunaWith->resposta_pendente = true;
